@@ -6,12 +6,16 @@ Testing
 The source code distribution of the relayr Python library contains a testsuite
 that can be run after downloading the full code archive. It is not installed
 together with the Python package itself, but needs to be run from the unarchived
-code distribution. This has been tesed on Linux and OS X.
+code distribution. This has been tested on Linux and OS X.
+
+
+Testing on a single Python version
+-----------------------------------
 
 The test suite is located inside the ``tests`` subdirectory
-and can be run using PyTest_ which, unlike the ``unittest`` framework,
-does not require writing boilerplate code. This allows, among other things,
-reusing single test snippets more easily outside of the test suite.
+and can be run using the PyTest_ framework which, unlike the ``unittest``
+framework, does not require writing much boilerplate code. This allows, among
+other things, reusing single test snippets more easily outside of the test suite.
 
 To run the tests you don't even need to have PyTest_ installed, since the
 archive contains a file named ``runtests.py`` which is essentially a minimized
@@ -48,8 +52,34 @@ correctly (the ``s`` indicates a skipped test, here because of platform limitati
 
     ================== 45 passed, 4 skipped in 103.02 seconds ==================
 
-Naturally, you can add more verbosity, run selected test modules or methods
-if desired, run tests for different Python versions simultaneously, and much more.
+Of course, you can add more verbosity, run selected test modules or methods if
+desired and much more. Please see the PyTest_ documentation for more information!
+
+
+Testing on multiple Python versions
+-----------------------------------
+
+One other, and significant, advantage of using the PyTest_ framework is being able
+to run the tests easily over a whole range of Python versions. A nice tool for
+automating this is tox_, which can be easily installed with ``pip install tox``.
+Given a short configuration file named ``tox.ini`` like the one provided in the
+top-level directory of this package one can simply call ``tox`` to run the test
+suite over multiple versions of Python automatically (below only the summary of
+a run over four versions is shown):
+
+.. code-block:: console
+
+    $ tox
+
+    =========================== test session starts ============================
+    [ ... detailed output skipped here ... ]
+    ================== 45 passed, 4 skipped in 103.02 seconds ==================
+    _________________________________ summary __________________________________
+      py26: commands succeeded
+      py27: commands succeeded
+      py33: commands succeeded
+      py34: commands succeeded
 
 
 .. _PyTest: http://pytest.org/
+.. _tox: https://testrun.org/tox/
