@@ -11,6 +11,7 @@ include make_docs.sh
 include demos/api_pulse.py
 include demos/noise.py
 include demos/scan_wunderbars.py
+recursive-include demos/flask_app *
 
 recursive-include docs *
 recursive-include tests *
