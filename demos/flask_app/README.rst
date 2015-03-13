@@ -3,7 +3,7 @@ README
 
 This is a sample Python web application accessing an IOT application in the relayr_
 Open Sensors Cloud. It is built using the micro web framework Flask_, Authomatic_
-for OAuth2 and the relayr `Python SDK`_ to access the relayr_ cloud. 
+for OAuth2 and the relayr `Python SDK`_ to access the relayr_ cloud.
 
 The main functionality is to connect to the relayr_ online application using
 OAuth2_ and access some of its resources, like a WunderBar and its individual
@@ -42,7 +42,7 @@ only in its repository code, which is currently not realeased yet).
 .. code-block:: bash
 
     cd flask_app
-    pip install -r requrements.txt
+    pip install -r requirements.txt
 
 
 Setup
@@ -68,7 +68,7 @@ Usage
 
 Now you only have to execute ``python run.py``, open the indicated URL
 (e.g. http://127.0.0.1:8080) in a browser, click on the ``relayr`` link,
-login on the relayr_ login page with your account credentials.
+and log-in with your account credentials on the relayr_ login page.
 
 As a result you should then see a very decent page with some details about
 your relayr account (name, ID, email) and your WunderBars and their devices!
