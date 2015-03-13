@@ -411,12 +411,26 @@ class Device(object):
 
     def send_data(self, data):
         """
-        Sends a data pacakge to the device.
+        Sends a data package to the device.
 
         :param data: the data to be sent
         :type data: dict
         """
         res = self.client.api.post_device_data(self.id, data)
+        return res
+
+    def send_config(self, data):
+        """
+        Sends a data package to configure the device.
+
+        At the moment this can be only the frequency (in fact, the sampling
+        period) for sending sensor data, so the only value for ``data``
+        showing any effect is e.g. ``{'frequency': 500}`` (in milliseconds).
+
+        :param data: the config data to be sent
+        :type data: dict
+        """
+        res = self.client.api.post_device_configuration(self.id, **data)
         return res
 
     def delete(self):
