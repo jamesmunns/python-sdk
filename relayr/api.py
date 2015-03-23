@@ -1355,7 +1355,7 @@ class Api(object):
         _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
-    def post_transmitter(self, transmitterID, ownerID=None, name=None, connector=None):
+    def post_transmitter(self, transmitterID, ownerID=None, name=None, integrationType=None):
         """
         Register a new transmitter on the relayr platform.
 
@@ -1374,8 +1374,8 @@ class Api(object):
             data.update(owner=ownerID)
         if name is not None:
             data.update(name=name)
-        if connector is not None:
-            data.update(connector=connector)
+        if integrationType is not None:
+            data.update(integrationType=integrationType)
 
         # https://api.relayr.io/transmitters/<id>
         url = '{0}/transmitters/{1}'.format(self.host, transmitterID)
