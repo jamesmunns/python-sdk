@@ -26,12 +26,10 @@ help of Pip:
 Examples
 --------
 
-Receive a 10 second data stream, from one of your WunderBar sensors (device). In the
-example below the device does not have to be a public one in order to be used. 
-You can obtain your device IDs from the relayr Dashboard `My Devices section`_:
-
-MQTT_ style (new)
-.................
+Receive a 10 second data stream using MQTT_, from one of your WunderBar sensors
+(device). In the follwoing example the device does not have to be a public one
+in order to be used (you can obtain your device IDs from the relayr Dashboard
+`My Devices`_ section):
 
 .. code-block:: python
 
@@ -47,26 +45,9 @@ MQTT_ style (new)
     time.sleep(10)
     stream.stop()
     
-PLEASE NOTE: Receiving data via MQTT will work only for 
-Python versions 2.7 and above due to limited support in `paho-mqtt` for TLS in Python 2.6.
-
-PubNub_ style (old)
-...................
-
-.. code-block:: python
-
-    import time
-    from relayr import Client
-    c = Client(token='<my_access_token>')
-    dev = c.get_device(id='<my_device_id>').get_info()
-    user = c.get_user()
-    app = c.get_app()
-    def pubnub_callback(message, channel):
-        print(repr(message), type(message))
-    conn = user.connect_device(app, dev, pubnub_callback)
-    conn.start()
-    time.sleep(10)
-    conn.stop()
+PLEASE NOTE: Receiving data via MQTT will work only for Python versions 2.7
+and above due to limited support in ``paho-mqtt`` for TLS in Python 2.6.
+Also: the old style of receiving data via PubNub_ is deprecated.
 
 
 Switch a device's LED on/off
@@ -79,11 +60,14 @@ Switch a device's LED on/off
     d = c.get_device(id='<my_device_id>')
     d.switch_led_on(True)
 
+You can find more examples in the ``demos`` directory of the unarchived
+source code distribution or online in the `demos folder on GitHub`_.
+
 
 Documentation
 -------------
 
-For references to the full documenation for the Python library please visit
+For references to the full documentation for the Python library please visit
 our Developer Dashboard `Python section`_!
 
 
@@ -96,7 +80,8 @@ our Developer Dashboard `Python section`_!
 .. _Python Package Index: https://pypi.python.org/pypi/relayr/
 .. _BlueZ: http://www.bluez.org/
 .. _Python section: https://developer.relayr.io/documents/Python/Introduction
-.. _My Devices section: https://developer.relayr.io/dashboard/devices
+.. _My Devices: https://developer.relayr.io/dashboard/devices
 .. _PubNub: http://www.pubnub.com/
 .. _MQTT: http://mqtt.org/
 .. _its Python client: https://github.com/pubnub/python/
+.. _demos folder on GitHub: https://github.com/relayr/python-sdk/tree/master/demos
