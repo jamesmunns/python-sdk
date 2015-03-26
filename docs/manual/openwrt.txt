@@ -1,0 +1,62 @@
+OpenWRT
+=======
+
+OpenWRT_ is a popular open, minimized Linux distribution for embedded
+systems. One of the boards available now running OpenWRT_ is the WRTnode_
+which includes a WiFi controller and seems especially well-suited for
+IoT applications.
+
+Although OpenWRT_ is a heavily minimized it has its own package management
+system with dependancy tracking and with many interesting packages
+including a MQTT broker named Mosquitto and a minimal Python interpreter
+(version 2.7).
+
+This makes it easy to control the input/output pins on a board like this
+with a high-level language like Python and libraries like Pingo_ for it.
+And it also makes it possible to run the relayr Python-SDK on the board
+itself!
+
+Before installing the Python-SDK on OpenWRT a few additional steps are
+necessary to add a few features missing in the Python interpreter
+installed by default.
+
+Upgrade Python
+--------------
+
+The relayr Python-SDK is mostly a client for the RESTful HTTP relayr
+API, implemented using the ``requests`` package which itself builds on
+``urllib3``. The minimal default Python interepreter on OpenWRT does
+not support these, so it must be upgraded to do that.
+
+More to come... 
+
+Minimizing Python Code
+----------------------
+
+Code minimization is usually performed on Javacript libraries to reduce
+download times in webbrowsers. On embedded devices the precious resource
+is memory (on a WRTnode_ it's 16 MB of flash user memory). Therefore, it
+can sometimes be helpful to reduce the size of any larger Python software
+to be installed, too, either by a third party or by yourself.
+
+The recommended tool for minimizing Python code is pyminifier_ which in
+its simple forms will strip-off docstrings and comments and minimize the
+indentation of Python source files. You can use it on the relayr
+Python-SDK for example as follows before installing it on OpenWRT_:
+
+.. code-block:: bash
+
+    pip install pyminifier
+    wget https://github.com/relayr/python-sdk/archive/0.2.4.tar.gz
+    tar xfz 0.2.4.tar.gz
+    cd 0.2.4
+    pyminifier *.py
+
+More to come... 
+
+
+.. _OpenWRT: http://openwrt.org
+.. _WRTnode: http://wrtnode.com
+.. _Pingo: http://pingo.io
+.. _MQTT: http://mqtt.org
+.. _pyminifier: https://github.com/liftoff/pyminifier
