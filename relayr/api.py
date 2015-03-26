@@ -938,7 +938,7 @@ class Api(object):
         _, data = self.perform_request('GET', url)
         return data
 
-    def post_device(self, name, ownerID, modelID, firmwareVersion, integrationType=None):
+    def post_device(self, name, ownerID, modelID, firmwareVersion):
         """
         Register a new device on the relayr platform.
 
@@ -950,8 +950,6 @@ class Api(object):
         :type modelID: string
         :param firmwareVersion: the device's firmware version
         :type firmwareVersion: string
-        :param integrationType: the transmitter integration type
-        :type integrationType: string
         :rtype: list of dicts, each representing a relayr device
         """
         data = {
@@ -960,12 +958,40 @@ class Api(object):
           "model": modelID,
           "firmwareVersion": firmwareVersion
         }
-        if integrationType is not None:
-            data.update(integrationType=integrationType)
         # https://api.relayr.io/devices
         url = '{0}/devices'.format(self.host)
         _, data = self.perform_request('POST', url, data=data, headers=self.headers)
         return data
+
+
+    def post_device_wb2(self, name, ownerID, modelID, firmwareVersion, mac, transmitterId):
+        """
+        Register a new device on the relayr platform.
+
+        :param name: the device name
+        :type name: string
+        :param ownerID: the device owner's UUID
+        :type ownerID: string
+        :param modelID: the device model's UUID
+        :type modelID: string
+        :param firmwareVersion: the device's firmware version
+        :type firmwareVersion: string
+        :rtype: list of dicts, each representing a relayr device
+        """
+        data = {
+          "name": name,
+          "owner": ownerID,
+          "model": modelID,
+          "firmwareVersion": firmwareVersion,
+          "integrationType": "Wunderbar2",
+          "mac": mac,
+          "transmitterId": transmitterId
+        }
+        # https://api.relayr.io/devices
+        url = '{0}/devices'.format(self.host)
+        _, data = self.perform_request('POST', url, data=data, headers=self.headers)
+        return data
+
 
     def get_device(self, deviceID):
         """
