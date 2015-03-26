@@ -938,7 +938,7 @@ class Api(object):
         _, data = self.perform_request('GET', url)
         return data
 
-    def post_device(self, name, ownerID, modelID, firmwareVersion):
+    def post_device(self, name, ownerID, modelID, firmwareVersion, integrationType=None):
         """
         Register a new device on the relayr platform.
 
@@ -950,6 +950,8 @@ class Api(object):
         :type modelID: string
         :param firmwareVersion: the device's firmware version
         :type firmwareVersion: string
+        :param integrationType: the transmitter integration type
+        :type integrationType: string
         :rtype: list of dicts, each representing a relayr device
         """
         data = {
@@ -958,6 +960,8 @@ class Api(object):
           "model": modelID,
           "firmwareVersion": firmwareVersion
         }
+        if integrationType is not None:
+            data.update(integrationType=integrationType)
         # https://api.relayr.io/devices
         url = '{0}/devices'.format(self.host)
         _, data = self.perform_request('POST', url, data=data, headers=self.headers)
@@ -1365,8 +1369,8 @@ class Api(object):
         :type ownerID: string
         :param name: the transmitter name
         :type name: string
-        :param connector: the transmitter connector
-        :type connector: string
+        :param integrationType: the transmitter integration type
+        :type integrationType: string
         :rtype: an empty dict(?)
         """
         data = {}
