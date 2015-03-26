@@ -1,4 +1,4 @@
 requests
-pubnub==3.7.1
 termcolor
 paho-mqtt==1.1
+isodate
