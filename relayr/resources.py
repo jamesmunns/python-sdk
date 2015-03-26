@@ -7,6 +7,7 @@ Resources may be entities such as users, publishers, applications,
 devices, device models and transmitters.
 """
 
+import warnings
 
 from relayr import exceptions
 from relayr.dataconnection import Connection
@@ -57,18 +58,25 @@ class User(object):
             yield dev
 
     def connect_device(self, app, device, callback):
-        "Opens and returns a connection to the data provider."
+        "(Deprecated) Opens and returns a connection to the data provider."
+
+        msg = "Pubnub support will be discontinued in relayr==0.3.0, please use MQTT!"
+        warnings.warn(msg, RuntimeWarning)
 
         creds = self.client.api.post_apps_devices(app.id, device.id)
         return Connection(callback, creds)
 
     def connect_public_device(self, device, callback):
-        "Opens and returns a connection to the data provider."
+        "(Deprecated) Opens and returns a connection to the data provider."
+
+        msg = "Pubnub support will be discontinued in relayr==0.3.0, please use MQTT!"
+        warnings.warn(msg, RuntimeWarning)
 
         creds = self.client.api.post_devices_public_subscription(device.id)
         return Connection(callback, creds)
 
     def disconnect_device(self, id):
+        "(Deprecated)."
         # There is no disconnect in the API...
         raise NotImplementedError
 
@@ -369,30 +377,41 @@ class Device(object):
 
     def disconnect_from_app(self, app):
         """
-        Disconnects the device from an app.
+        (Deprecated) Disconnects the device from an app.
 
         See also the App.disconnect_from_device() method...
 
         :param app: the app (name) to be disconnected from
         :type app: string(?)
         """
+
+        msg = "Pubnub support will be discontinued in relayr==0.3.0, please use MQTT!"
+        warnings.warn(msg, RuntimeWarning)
+
         res = self.client.api.delete_app_device(app.id, self.id)
         return res
 
     def connect_to_device(self, appID, id, callback):
         """
-        Subscribes a user to a device.
+        (Deprecated) Subscribes a user to a device.
         """
+
+        msg = "Pubnub support will be discontinued in relayr==0.3.0, please use MQTT!"
+        warnings.warn(msg, RuntimeWarning)
+
         creds = self.client.api.post_apps_devices(appID, self.id)
         return Connection(callback, creds)
 
     def connect_to_public_device(self, id, callback):
         """
-        Subscribes a user to a public device.
+        (Deprecated) Subscribes a user to a public device.
 
         :param id: the device's UID
         :type id: string
         """
+
+        msg = "Pubnub support will be discontinued in relayr==0.3.0, please use MQTT!"
+        warnings.warn(msg, RuntimeWarning)
 
         creds = self.client.api.post_devices_public_subscription(self.id)
         return Connection(callback, creds)
@@ -453,6 +472,27 @@ class Device(object):
         """
         res = self.client.api.post_device_command_led(self.id, {'cmd': int(bool)})
         return self
+
+    def get_data(self, start=None, end=None, duration=None, pagesize=1, pagenum=1):
+        """
+        Get a chunk of historical data recorded in the past for a specific device.
+
+        WARNING: This is bleeding edge code and might change again, soon!
+
+        Exactly one of the parameters ``start``, ``end`` and ``duration`` must
+        be None, else an ``AssertionError`` is raised. The data will be returned
+        using a paging mechanism with up to 1000 data points per page (``pagesize``).
+
+        :param start: datetime value
+        :type start: ISO 8601 string or ``datetime.datetime`` instance or None
+        :param end: datetime value
+        :type end: ISO 8601 string or ``datetime.datetime`` instance or None
+        :param duration: time duration
+        :type duration: ISO 8601 duration string or ``datetime.timedelta`` instance or None
+        :rtype: a dict with historical data plus meta-information
+        """
+        res = self.client.api.get_device_data(self.id, start=start, end=end, duration=duration, pagesize=pagesize, pagenum=pagenum)
+        return res
 
     # new methods for transport channels
 

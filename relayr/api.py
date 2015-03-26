@@ -14,13 +14,14 @@ import platform
 import urllib
 import warnings
 import logging
+import datetime
 
 import requests
 
 from relayr import config
 from relayr.version import __version__
-from relayr.compat import PY26
 from relayr.exceptions import RelayrApiException
+from relayr.utils.misc import get_start_end
 
 
 def create_logger(sender):
@@ -753,11 +754,17 @@ class Api(object):
 
         Credentials are returned as part of the response.
 
+        This method is deprecated and will be removed in relayr==0.3.0. Please use MQTT instead!
+
         :param appID: the application's UUID
         :type appID: string
         :param deviceID: the device's UUID
         :type deviceID: string
         """
+
+        msg = "Pubnub support will be discontinued in relayr==0.3.0, please use MQTT!"
+        warnings.warn(msg, RuntimeWarning)
+
         # {{relayrAPI}}/apps/{{appID}}/devices/{{deviceID}}
         url = '{0}/apps/{1}/devices/{2}'.format(self.host, appID, deviceID)
         _, data = self.perform_request('POST', url, headers=self.headers)
@@ -767,11 +774,17 @@ class Api(object):
         """
         Disconnect a specific app from a specific device.
 
+        This method is deprecated and will be removed in relayr==0.3.0. Please use MQTT instead!
+
         :param appID: the application's UUID
         :type appID: string
         :param deviceID: the device's UUID
         :type deviceID: string
         """
+
+        msg = "Pubnub support will be discontinued in relayr==0.3.0, please use MQTT!"
+        warnings.warn(msg, RuntimeWarning)
+
         # {{relayrAPI}}/apps/{{appID}}/devices/{{deviceID}}
         url = '{0}/apps/{1}/devices/{2}'.format(self.host, appID, deviceID)
         _, data = self.perform_request('DELETE', url, headers=self.headers)
@@ -976,6 +989,84 @@ class Api(object):
         """
         # https://api.relayr.io/devices/%s
         url = '{0}/devices/{1}'.format(self.host, deviceID)
+        _, data = self.perform_request('GET', url, headers=self.headers)
+        return data
+
+    def get_device_data(self, deviceID, start=None, end=None, duration=None, pagesize=1, pagenum=1):
+        """
+        Get a chunk of historical data recorded in the past for a specific device.
+
+        WARNING: This is bleeding edge code and might change again, soon!
+
+        Exactly one of the parameters ``start``, ``end`` and ``duration`` must
+        be None, else an ``AssertionError`` is raised. The data will be returned
+        using a paging mechanism with up to 1000 data points per page (``pagesize``).
+
+        :param deviceID: the device UUID
+        :type deviceID: string
+        :param start: datetime value
+        :type start: ISO 8601 string or ``datetime.datetime`` instance or None
+        :param end: datetime value
+        :type end: ISO 8601 string or ``datetime.datetime`` instance or None
+        :param duration: time duration
+        :type duration: ISO 8601 duration string or ``datetime.timedelta`` instance or None
+        :param pagesize: the device UUID
+        :type pagesize: string
+        :param pagenum: the device UUID
+        :type pagenum: string
+        :rtype: a dict with historical data plus some meta-information
+
+        Example output::
+
+            [
+              200,
+              {
+                "end": "2015-04-01T00:00:00.000Z",
+                "pageSize": 1,
+                "results": [
+                  {
+                    "received": "2015-03-06T10:49:11.998Z",
+                    "readings": [
+                      {
+                        "meaning": "acceleration",
+                        "recorded": "2015-03-06T10:49:12.127Z",
+                        "value": {
+                          "y": 0.05999999865889549,
+                          "x": 0.009999999776482582,
+                          "z": 1.0099999904632568
+                        }
+                      },
+                      {
+                        "meaning": "angularSpeed",
+                        "recorded": "2015-03-06T10:49:12.127Z",
+                        "value": {
+                          "y": 24.780000686645508,
+                          "x": -11.739999771118164,
+                          "z": -3.3499999046325684
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "start": "2015-03-01T00:00:00.000Z",
+                "_links": {
+                  "self": {
+                    "href": "/devices/3f8e85c7-3624-4bab-8ea4-a1058a6ca233/history/list?page=1&pageSize=1&start=2015-03-01T00:00:00.000Z&end=2015-04-01T00:00:00.000Z"
+                  },
+                  "next": {
+                    "href": "/devices/3f8e85c7-3624-4bab-8ea4-a1058a6ca233/history/list?page=2&pageSize=1&start=2015-03-01T00:00:00.000Z&end=2015-04-01T00:00:00.000Z"
+                  }
+                },
+                "totalResults": 94061,
+                "page": 1
+              }
+            ]
+        """
+
+        start, end = get_start_end(start=start, end=end, duration=duration)
+
+        # https://api.relayr.io/devices/%s/history/list?start=...&end=...&pagesize=...&page=...
+        url = '{0}/devices/{1}/history/list?start={2}&end={3}&pagesize={4}&page={5}'.format(self.host, deviceID, start, end, pagesize, pagenum)
         _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
@@ -1203,6 +1294,8 @@ class Api(object):
         """
         Return PubNub credentials for subscribing to a specific application and device.
 
+        This method is deprecated and will be removed in relayr==0.3.0. Please use MQTT instead!
+
         :param appID: the app's UUID
         :type appID: string
         :param deviceID: the device's UUID
@@ -1218,6 +1311,10 @@ class Api(object):
                 "subscribeKey": "sub-c-..."
             }
         """
+
+        msg = "Pubnub support will be discontinued in relayr==0.3.0, please use MQTT!"
+        warnings.warn(msg, RuntimeWarning)
+
         # https://api.relayr.io/apps/%s/devices/%s
         url = '{0}/apps/{1}/devices/{2}'.format(self.host, appID, deviceID)
         _, data = self.perform_request('POST', url, headers=self.headers)
