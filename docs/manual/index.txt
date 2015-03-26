@@ -25,6 +25,7 @@ User's Guide
     examples
     classes
     raspberrypi
+    openwrt
     documentation
     contributing
 
