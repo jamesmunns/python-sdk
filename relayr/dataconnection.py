@@ -6,19 +6,24 @@ Data Connection Classes
 This module provide connection classes for accessing device data.
 """
 
+import sys
 import ssl
 import time
 import threading
 import platform
+import warnings
 import os
 from os.path import exists, join, expanduser, basename
 
 import requests
-from Pubnub import Pubnub
 import paho.mqtt.client as mqtt
 
 from relayr import config
 from relayr.compat import PY2, PY3
+
+# This will be replaced lazily with the Pubnub class from the Pubnub
+# package, iff needed (before soon removing PubNub supprot completely).
+Pubnub = None
 
 
 class PubnubDataConnection(threading.Thread):
@@ -40,6 +45,24 @@ class PubnubDataConnection(threading.Thread):
         self.callback = callback
         self.credentials = credentials
         self.channel = credentials['channel']
+
+        # lazy import of Pubnub (might need a 'sudo' depending on Python installation)
+        global Pubnub
+        if not Pubnub:
+            msg = "Pubnub support will be discontinued in relayr==0.3.0, please use MQTT!"
+            warnings.warn(msg, RuntimeWarning)
+            try:
+                from Pubnub import Pubnub
+            except ImportError:
+                import pip
+                pip.main(['install', 'pubnub==3.7.1'])
+                try:
+                    from Pubnub import Pubnub
+                except ImportError:
+                    msg = "Failed to install pubnub==3.7.1 at runtime. "
+                    msg += "Maybe re-run with 'sudo' or execute "
+                    msg += "'pip install pubnub==3.7.1' separately..."
+                    raise RuntimeError(msg)
 
         self.hub = Pubnub(
             publish_key=credentials.get('publishKey', None),
