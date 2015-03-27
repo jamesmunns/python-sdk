@@ -983,7 +983,7 @@ class Api(object):
           "owner": ownerID,
           "model": modelID,
           "firmwareVersion": firmwareVersion,
-          "integrationType": "Wunderbar2",
+          "integrationType": "wunderbar2",
           "mac": mac,
           "transmitterId": transmitterId
         }
