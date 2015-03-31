@@ -976,6 +976,36 @@ class Api(object):
         _, data = self.perform_request('POST', url, data=data, headers=self.headers)
         return data
 
+
+    def post_device_wb2(self, name, ownerID, modelID, firmwareVersion, mac, transmitterId):
+        """
+        Register a new device on the relayr platform.
+
+        :param name: the device name
+        :type name: string
+        :param ownerID: the device owner's UUID
+        :type ownerID: string
+        :param modelID: the device model's UUID
+        :type modelID: string
+        :param firmwareVersion: the device's firmware version
+        :type firmwareVersion: string
+        :rtype: list of dicts, each representing a relayr device
+        """
+        data = {
+          "name": name,
+          "owner": ownerID,
+          "model": modelID,
+          "firmwareVersion": firmwareVersion,
+          "integrationType": "wunderbar2",
+          "mac": mac,
+          "transmitterId": transmitterId
+        }
+        # https://api.relayr.io/devices
+        url = '{0}/devices'.format(self.host)
+        _, data = self.perform_request('POST', url, data=data, headers=self.headers)
+        return data
+
+
     def get_device(self, deviceID):
         """
         Get information about a specific device.
@@ -1452,7 +1482,7 @@ class Api(object):
         _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
-    def post_transmitter(self, transmitterID, ownerID=None, name=None):
+    def post_transmitter(self, transmitterID, ownerID=None, name=None, integrationType=None):
         """
         Register a new transmitter on the relayr platform.
 
@@ -1462,6 +1492,8 @@ class Api(object):
         :type ownerID: string
         :param name: the transmitter name
         :type name: string
+        :param integrationType: the transmitter integration type
+        :type integrationType: string
         :rtype: an empty dict(?)
         """
         data = {}
@@ -1469,6 +1501,8 @@ class Api(object):
             data.update(owner=ownerID)
         if name is not None:
             data.update(name=name)
+        if integrationType is not None:
+            data.update(integrationType=integrationType)
 
         # https://api.relayr.io/transmitters/<id>
         url = '{0}/transmitters/{1}'.format(self.host, transmitterID)
