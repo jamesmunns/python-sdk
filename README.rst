@@ -27,7 +27,7 @@ Examples
 --------
 
 Receive a 10 second data stream using MQTT_, from one of your WunderBar sensors
-(device). In the follwoing example the device does not have to be a public one
+(device). In the following example the device does not have to be a public one
 in order to be used (you can obtain your device IDs from the relayr Dashboard
 `My Devices`_ section):
 
