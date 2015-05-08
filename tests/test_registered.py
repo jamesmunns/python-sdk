@@ -163,25 +163,6 @@ class TestAPI(object):
         assert len(apps) > 0
         assert type(apps[0]) == dict
 
-    def test_public_device_credentials(self, fix_registered):
-        "Test get credentials for subscribing to a public device."
-        from relayr import Client
-        from relayr.resources import Device
-        token = fix_registered.testset1['token']
-        c = Client(token=token)
-        deviceID = fix_registered.testset1['deviceID']
-        dev = Device(id=deviceID, client=c)
-        dev.get_info()
-        made_public = False
-        if not dev.public:
-            dev.update(public=True)
-            made_public = True
-        creds = c.api.post_devices_public_subscription(deviceID)
-        if made_public:
-            dev.update(public=False)
-        for key in 'authKey subscribeKey cipherKey channel'.split():
-            assert key in creds
-
     def test_get_wunderbar(self, fix_registered):
         "Test get info about the user's registered wunderbar device."
         from relayr import Client
