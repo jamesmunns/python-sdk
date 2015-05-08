@@ -10,7 +10,7 @@ devices, device models and transmitters.
 import warnings
 
 from relayr import exceptions
-from relayr.dataconnection import Connection
+from relayr.dataconnection import MqttStream as Connection
 
 
 class User(object):
