@@ -34,6 +34,10 @@ with open('README.rst') as f:
 with open('requirements.txt') as f:
     install_requires = f.read().strip().split('\n')
 
+# fix InsecurePlatformWarning for Python < 2.7.9
+if sys.version_info[:3] < (2, 7, 9):
+    install_requires += ['pyopenssl', 'ndg-httpsclient', 'pyasn1']
+
 # Add pexpect only if not running on Windows (not strictly needed
 # except for the *very* exerimental file ble.py).
 if platform.system() != 'Windows':
