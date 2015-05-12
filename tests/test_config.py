@@ -4,6 +4,9 @@
 This module contains configuration tests for the Relayr restful HTTP API client.
 
 Attention: The configuration mechanism is likely to change.
+
+Warning: Run this only seperately from the other tests! This is why this 
+module's filename starts with an underscore.
 """
 
 import os
