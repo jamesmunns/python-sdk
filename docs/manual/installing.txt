@@ -12,7 +12,7 @@ In case you are new to Python you may find the below information useful.
 Installing the installer
 ------------------------
 
-The recommended installation tool for Python packages today is `pip_`.
+The recommended installation tool for Python packages today is pip_.
 
 .. code-block:: console
 
