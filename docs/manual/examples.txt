@@ -60,28 +60,24 @@ Below you can see a version of that code stripped down to only a few lines
 
     import time
     from relayr import Client
+    from relayr.dataconnection import MqttStream
     c = Client(token='<my_token>')
-    d = c.get_device(deviceID='<dev_id>').get_info()
-    def callback(message, channel):
-        print(message)
-    user = c.get_user()
-    app = c.get_app()
-    conn = user.connect_device(app, d, callback)
-    conn.start()
+    dev = c.get_device(id='<dev_id>')
+    def mqtt_callback(topic, payload):
+        print('%s %s' % (topic, payload))
+    stream = MqttStream(mqtt_callback, [dev])
+    stream.start()
     time.sleep(10)
-    conn.stop()
+    stream.stop()
 
 When running (with the correct token and device ID) this should print incoming
-data from the noise level sensor with a time stamp and sound level in this manner:
+MQTT messages from the noise level sensor with time stamps and sound levels
+like this:
 
 .. code-block:: console
 
-    {"ts":1414671670992,"snd_level":20}
-    {"ts":1414671672092,"snd_level":78}
-    {"ts":1414671673192,"snd_level":38}
-    {"ts":1414671674292,"snd_level":23}
-    {"ts":1414671675392,"snd_level":19}
-    {"ts":1414671676712,"snd_level":15}
-    {"ts":1414671677812,"snd_level":21}
-    {"ts":1414671678912,"snd_level":33}
-    {"ts":1414671680012,"snd_level":28}
+    /v1/36fb3b0e-4abd-4598-9e0c-b4952cab4082 {"deviceId":"df088c31-1f12-4969-9b23-f7354b296367","modelId":"4f38b6c6-a8e9-4f93-91cd-2ac4064b7b5a","readings":[{"meaning":"noiseLevel","value":33,"recorded":1431440372993}],"received":1431440129390}
+    /v1/36fb3b0e-4abd-4598-9e0c-b4952cab4082 {"deviceId":"df088c31-1f12-4969-9b23-f7354b296367","modelId":"4f38b6c6-a8e9-4f93-91cd-2ac4064b7b5a","readings":[{"meaning":"noiseLevel","value":60,"recorded":1431440374973}],"received":1431440131539}
+    /v1/36fb3b0e-4abd-4598-9e0c-b4952cab4082 {"deviceId":"df088c31-1f12-4969-9b23-f7354b296367","modelId":"4f38b6c6-a8e9-4f93-91cd-2ac4064b7b5a","readings":[{"meaning":"noiseLevel","value":25,"recorded":1431440377173}],"received":1431440134005}
+    /v1/36fb3b0e-4abd-4598-9e0c-b4952cab4082 {"deviceId":"df088c31-1f12-4969-9b23-f7354b296367","modelId":"4f38b6c6-a8e9-4f93-91cd-2ac4064b7b5a","readings":[{"meaning":"noiseLevel","value":69,"recorded":1431440379373}],"received":1431440136160}
+    /v1/36fb3b0e-4abd-4598-9e0c-b4952cab4082 {"deviceId":"df088c31-1f12-4969-9b23-f7354b296367","modelId":"4f38b6c6-a8e9-4f93-91cd-2ac4064b7b5a","readings":[{"meaning":"noiseLevel","value":18,"recorded":1431440381572}],"received":1431440138298}
