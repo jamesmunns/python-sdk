@@ -57,29 +57,6 @@ class User(object):
             dev.get_info()
             yield dev
 
-    def connect_device(self, app, device, callback):
-        "(Deprecated) Opens and returns a connection to the data provider."
-
-        msg = "Pubnub support will be discontinued in relayr==0.3.0, please use MQTT!"
-        warnings.warn(msg, RuntimeWarning)
-
-        creds = self.client.api.post_apps_devices(app.id, device.id)
-        return Connection(callback, creds)
-
-    def connect_public_device(self, device, callback):
-        "(Deprecated) Opens and returns a connection to the data provider."
-
-        msg = "Pubnub support will be discontinued in relayr==0.3.0, please use MQTT!"
-        warnings.warn(msg, RuntimeWarning)
-
-        creds = self.client.api.post_devices_public_subscription(device.id)
-        return Connection(callback, creds)
-
-    def disconnect_device(self, id):
-        "(Deprecated)."
-        # There is no disconnect in the API...
-        raise NotImplementedError
-
     def update(self, name=None, email=None):
         res = self.client.api.patch_user(self.id, name=name, email=email)
         for k in res:
@@ -276,30 +253,6 @@ class App(object):
         """
         raise NotImplementedError
 
-    def connect_to_device(self, device):
-        """
-        Connects the app to a device.
-        
-        Data reception credentials are returned as part of the response.
-
-        See also the Device.connect_to_device() method...
-
-        :param device: the device (name) to be connected
-        :type device: string(?)
-        """
-        raise NotImplementedError
-
-    def disconnect_from_device(self, device):
-        """
-        Disonnects the app from a device.
-
-        See also the Device.disconnect_from_app() method...
-
-        :param device: the device (name) to be disconnected from
-        :type device: string(?)
-        """
-        raise NotImplementedError
-
 
 class Device(object):
     """
@@ -360,61 +313,6 @@ class Device(object):
             app = App(id=app_json['id'], client=self.client)
             app.get_info()
             yield app
-
-    def connect_to_app(self, app):
-        """
-        Connects the device to an app.
-        
-        Data reception credentials are returned as part of the response.
-
-        See also the App.connect_to_device() method...
-
-        :param app: the app (name) to be connected
-        :type app: string(?)
-        """
-        res = self.client.api.post_app_device(app.id, self.id)
-        return res
-
-    def disconnect_from_app(self, app):
-        """
-        (Deprecated) Disconnects the device from an app.
-
-        See also the App.disconnect_from_device() method...
-
-        :param app: the app (name) to be disconnected from
-        :type app: string(?)
-        """
-
-        msg = "Pubnub support will be discontinued in relayr==0.3.0, please use MQTT!"
-        warnings.warn(msg, RuntimeWarning)
-
-        res = self.client.api.delete_app_device(app.id, self.id)
-        return res
-
-    def connect_to_device(self, appID, id, callback):
-        """
-        (Deprecated) Subscribes a user to a device.
-        """
-
-        msg = "Pubnub support will be discontinued in relayr==0.3.0, please use MQTT!"
-        warnings.warn(msg, RuntimeWarning)
-
-        creds = self.client.api.post_apps_devices(appID, self.id)
-        return Connection(callback, creds)
-
-    def connect_to_public_device(self, id, callback):
-        """
-        (Deprecated) Subscribes a user to a public device.
-
-        :param id: the device's UID
-        :type id: string
-        """
-
-        msg = "Pubnub support will be discontinued in relayr==0.3.0, please use MQTT!"
-        warnings.warn(msg, RuntimeWarning)
-
-        creds = self.client.api.post_devices_public_subscription(self.id)
-        return Connection(callback, creds)
 
     def send_command(self, command):
         """
