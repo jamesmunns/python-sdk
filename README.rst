@@ -23,6 +23,7 @@ help of Pip:
 
     pip install relayr
 
+
 Examples
 --------
 
@@ -47,7 +48,8 @@ in order to be used (you can obtain your device IDs from the relayr Dashboard
     
 PLEASE NOTE: Receiving data via MQTT will work only for Python versions 2.7
 and above due to limited support in ``paho-mqtt`` for TLS in Python 2.6.
-Also: the old style of receiving data via PubNub_ is deprecated.
+Also: the old style of receiving data via PubNub_ has been removed from
+the relayr API_ and this code base.
 
 
 Switch a device's LED on/off
@@ -83,5 +85,4 @@ our Developer Dashboard `Python section`_!
 .. _My Devices: https://developer.relayr.io/dashboard/devices
 .. _PubNub: http://www.pubnub.com/
 .. _MQTT: http://mqtt.org/
-.. _its Python client: https://github.com/pubnub/python/
 .. _demos folder on GitHub: https://github.com/relayr/python-sdk/tree/master/demos
