@@ -3,6 +3,18 @@
 Changelog
 =========
 
+0.3 (2015-05-XX)
+------------------
+
+Feature release moving from Pubnub to MQTT.
+
+* removed pubnub dependency in favour of MQTT
+* removed all pubnub-related API endpoints
+* added initial support for accessing historical data
+* added isodate and certifi dependencies (removing handling
+  of dedicated relayr MQTT certificate file)
+* added simple Flask-based web application with OAuth2 login on relayr.io
+
 
 0.2.4 (2015-02-27)
 ------------------
