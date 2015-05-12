@@ -14,10 +14,11 @@ import pytest
 
 
 ON_LINUX = sys.platform.startswith("linux")
-HAVE_BLUEZ = subprocess.Popen(['which', 'hcitool']).stdout != ''
+HAVE_BLUEZ = subprocess.Popen(['which', 'hcitool']).stdout != None
 
 
 @pytest.mark.skipif(not ON_LINUX, reason="requires Linux")
+@pytest.mark.skipif(not HAVE_BLUEZ, reason="no hciconfig found")
 class TestBle(object):
     "Tests for accessing BLE devices via Bluez tools (needs root permissions)."
 
