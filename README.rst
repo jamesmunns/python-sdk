@@ -28,6 +28,9 @@ help of Pip:
 Examples
 --------
 
+Receive live data
+.................
+
 Receive a 10 second data stream using MQTT_, from one of your WunderBar sensors
 (device). In the following example the device does not have to be a public one
 in order to be used (you can obtain your device IDs from the relayr Dashboard
