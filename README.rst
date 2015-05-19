@@ -2,7 +2,8 @@ The relayr Python Library
 =========================
 
 Welcome to the relayr Python Library. The repository provides Python
-developers with programmatic access points to the relayr platform.
+developers with programmatic access points to the relayr platform
+for the Internet of Things.
 
 These include access to the relayr cloud via the relayr API_ as well as 
 direct connection to the relayr WunderBar sensors, via Bluetooth Low
