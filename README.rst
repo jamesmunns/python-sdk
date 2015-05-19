@@ -2,7 +2,7 @@ The relayr Python Library
 =========================
 
 Welcome to the relayr Python Library. The repository provides Python
-developers with programmatic access points to the relayr platform
+developers with programmatic access points to the relayr_ platform
 for the Internet of Things.
 
 These include access to the relayr cloud via the relayr API_ as well as 
@@ -78,6 +78,7 @@ our Developer Dashboard `Python section`_!
     .. include:: CHANGELOG.txt
 
 
+.. _relayr: https://relayr.io
 .. _repository: https://github.com/relayr/python-sdk
 .. _API: https://developer.relayr.io/documents/relayrAPI/Introduction
 .. _Python Package Index: https://pypi.python.org/pypi/relayr/
