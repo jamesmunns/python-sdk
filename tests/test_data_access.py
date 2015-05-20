@@ -75,7 +75,7 @@ class TestMqttStreamsShort(object):
         time.sleep(10)
         conn.stop()
         # dev.delete_channel(creds['channelId'])
-        assert len(received) >= 5
+        assert len(received) > 0
 
 
 @pytest.mark.skipif(True, reason="Needs a CTRL-C to be stopped.")
