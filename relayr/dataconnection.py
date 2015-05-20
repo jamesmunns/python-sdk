@@ -10,10 +10,6 @@ import sys
 import ssl
 import time
 import threading
-# import platform
-# import warnings
-# import os
-# from os.path import exists, join, expanduser, basename
 
 import requests
 import certifi
@@ -47,22 +43,6 @@ class MqttStream(threading.Thread):
             for credentials in self.credentials_list]
         self.setDaemon(True)
 
-    ## TODO: remove
-    def _fetch_certificate(self):
-        """
-        Fetch certificate for accessing MQTT server and cache it.
-        """
-        folder = expanduser(config.RELAYR_FOLDER)
-        cert_url = config.MQTT_CERT_URL
-        cert_filename = basename(cert_url)
-        if not exists(folder):
-            os.makedirs(folder)
-        if not exists(join(folder, cert_filename)):
-            resp = requests.get(cert_url)
-            if resp.status_code == 200:
-                cert = resp.content
-                open(join(folder, cert_filename), 'w').write(cert)
-
     def run(self):
         """
         Thread method, called implicitly after starting the thread.
@@ -75,26 +55,8 @@ class MqttStream(threading.Thread):
         c.on_subscribe = self.on_subscribe
         c.on_unsubscribe = self.on_unsubscribe
         c.username_pw_set(creds['user'], creds['password'])
-
-        if 0:
-            # only encryption, no authentication
-            # c.tls_insecure_set(True)
-            folder = expanduser(config.RELAYR_FOLDER)
-            cert_url = config.MQTT_CERT_URL
-            cert_filename = basename(cert_url)
-            if not exists(join(folder, cert_filename)):
-                self._fetch_certificate()
-            cert_path = join(folder, cert_filename)
-            # c.tls_set(ca_certs=cert_path)
         c.tls_set(certifi.where(), tls_version=ssl.PROTOCOL_TLSv1)
-        c.connect('mqtt.relayr.io', port=8883, keepalive=60)
-
-        if 0:
-            try:
-                c.connect('mqtt.relayr.io', port=8883, keepalive=60)
-            except: # invalid cert?
-                self._fetch_certificate()
-                c.connect('mqtt.relayr.io', port=8883, keepalive=60)
+        c.connect(config.RELAYR_MQTT_HOST, port=config.RELAYR_MQTT_PORT, keepalive=60)
 
         try:
             c.loop_forever()
