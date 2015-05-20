@@ -17,25 +17,25 @@ from .version import __version__
 # defaults
 relayrAPI = 'https://api.relayr.io'
 clientName = 'io.relayr.sdk.python'
-dataConnectionHubName = 'PubNub'
 userAgentString = '{client_name}/{client_version} '
 userAgentString += '({platform}; {arch}; {python_implementation}-{python_version})'
 DEBUG = False
 LOG = False
 LOG_DIR = os.getcwd()
 RELAYR_FOLDER = os.path.expanduser('~/.relayr')
-MQTT_CERT_URL = 'http://mqtt.relayr.io/relayr.crt'
+RELAYR_MQTT_HOST = 'mqtt.relayr.io'
+RELAYR_MQTT_PORT = 8883
 
 # overwrite with environment variables if given
 relayrAPI = os.environ.get('RELAYR_API', relayrAPI)
 clientName = os.environ.get('RELAYR_PYTHON_CLIENT_NAME', clientName)
-dataConnectionHubName = os.environ.get('RELAYR_DATAHUB', dataConnectionHubName)
 userAgentString = os.environ.get('RELAYR_DATAHUB', userAgentString)
 DEBUG = True if os.environ.get('RELAYR_DEBUG', 'False') == 'True' else False
 LOG = True if os.environ.get('RELAYR_LOG', 'False') == 'True' else False
 LOG_DIR = os.environ.get('RELAYR_LOG_DIR', LOG_DIR)
 RELAYR_FOLDER = os.environ.get('RELAYR_FOLDER', RELAYR_FOLDER)
-MQTT_CERT_URL = os.environ.get('MQTT_CERT_URL', MQTT_CERT_URL)
+RELAYR_MQTT_HOST = os.environ.get('RELAYR_MQTT_HOST', RELAYR_MQTT_HOST)
+RELAYR_MQTT_PORT = int(os.environ.get('RELAYR_MQTT_PORT', RELAYR_MQTT_PORT))
 
 # derived variable, HTTP user-agent string
 userAgent = userAgentString.format(
