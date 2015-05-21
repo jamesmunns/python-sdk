@@ -12,7 +12,9 @@ In case you are new to Python you may find the below information useful.
 Installing the installer
 ------------------------
 
-The recommended installation tool for Python packages today is pip_.
+The recommended installation tool for Python packages today is pip_. If
+it is not already installed on your machine you can do so easyly as
+follows:
 
 .. code-block:: console
 
@@ -20,9 +22,9 @@ The recommended installation tool for Python packages today is pip_.
     $ python get-pip.py
 
 Using ``easy_install`` from setuptools_ is deprecated for `various reasons
-<http://stackoverflow.com/questions/3220404/why-use-pip-over-easy-install>`_ 
-see also `here 
-<https://python-packaging-user-guide.readthedocs.org/en/latest/technical.html#pip-vs-easy-install>`_.
+<http://stackoverflow.com/questions/3220404/why-use-pip-over-easy-install>`_.
+You can find more about packaging in the `Python Packaging User Guide 
+<https://python-packaging-user-guide.readthedocs.org/>`_.
 
 
 Creating a virtual environment
@@ -55,10 +57,11 @@ deactivate this environment using the following code:
 Installing a release
 --------------------
 
-You are able to install a release of the relayr library from PyPI_ with a single pip_ command. 
+You can install a release of the relayr library from PyPI_ with a single pip_
+command.
 Inside a virtual Python environment this should be done after activating that
 environment first (at the point of ``# do some work...`` in the previous section
-above). This will install the latest version:
+above). This will install the latest version from PyPI_:
 
 .. code-block:: console
 
@@ -70,9 +73,9 @@ this option below). Just download a tarball of the sources and unpack as follows
 
 .. code-block:: console
 
-    $ wget https://pypi.python.org/packages/source/r/relayr/relayr-0.2.4.tar.gz
-    $ tar xfz relayr-0.2.4.tar.gz
-    $ cd relayr-0.2.4
+    $ wget https://pypi.python.org/packages/source/r/relayr/relayr-0.3.0.tar.gz
+    $ tar xfz relayr-0.3.0.tar.gz
+    $ cd relayr-0.3.0
     $ python setup.py install
 
 

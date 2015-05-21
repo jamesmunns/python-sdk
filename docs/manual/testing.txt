@@ -6,7 +6,8 @@ Testing
 The source code distribution of the relayr Python library contains a testsuite
 that can be run after downloading the full code archive. It is not installed
 together with the Python package itself, but needs to be run from the unarchived
-code distribution. This has been tested on Linux and OS X.
+code distribution. This has been tested mainly on Linux and OS X, and to some
+degree on a Raspberry Pi running Rasbian and a WRTnode running OpenWRT.
 
 
 Testing on a single Python version
@@ -29,14 +30,15 @@ distribution is as simple as this:
     $ python runtests.py tests
 
 If you have PyTest_ installed (``pip install pytest`` will do) you can
-ommit the ``runtests.py`` file:
+ignore the ``runtests.py`` file:
 
 .. code-block:: console
 
     $ py.test tests
 
 In both cases the output should be something like this, when everything runs
-correctly (the ``s`` indicates a skipped test, here because of platform limitations):
+correctly (the ``s`` indicates a skipped test, here because of platform
+limitations):
 
 .. code-block:: console
 

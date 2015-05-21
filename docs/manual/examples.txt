@@ -49,12 +49,13 @@ To determine the number of publishers e.g. it runs code similar to this
 ``demos/noise.py``
 -------------------------
 
-This script establishes a connection to a WunderBar noise level sensor device, checks
-the incoming noise level values for some time, compares them to a maximum
-threshold and sends a reminder, by email, to take action if needed.
+This script establishes a connection to a WunderBar noise level sensor
+device, checks the incoming noise level values for some time, compares
+them to a maximum threshold and sends a reminder, by email, to take
+action if needed.
 
-Below you can see a version of that code stripped down to only a few lines
-(omitting the email notification part):
+Below you can see a version of that code stripped down to only a few
+lines (omitting the threshold comparison and email notification part):
 
 .. code-block:: python
 
@@ -71,8 +72,8 @@ Below you can see a version of that code stripped down to only a few lines
     stream.stop()
 
 When running (with the correct token and device ID) this should print incoming
-MQTT messages from the noise level sensor with time stamps and sound levels
-like this:
+MQTT messages from the noise level sensor with timestamps and sound levels
+like this (scroll right to see the actual values):
 
 .. code-block:: console
 

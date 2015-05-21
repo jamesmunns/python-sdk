@@ -1,37 +1,198 @@
 OpenWRT
 =======
 
-OpenWRT_ is a popular open, minimized Linux distribution for embedded
-systems. One of the boards available now running OpenWRT_ is the WRTnode_
-which includes a WiFi controller and seems especially well-suited for
-IoT applications.
+This page describes how to get the relayr Python API running on OpenWRT_,
+a popular open, minimized Linux distribution for embedded systems. One
+of the widely available boards running OpenWRT_ is the WRTnode_ which
+includes a WiFi controller and therefore seems especially well-suited
+for IoT applications.
 
-Although OpenWRT_ is a heavily minimized it has its own package management
-system with dependancy tracking and with many interesting packages
-including a MQTT broker named Mosquitto and a minimal Python interpreter
-(version 2.7).
+Although OpenWRT_ is heavily minimized (running in only 16 MB of memory)
+it has its own package management system (see ``opkg -h``) with dependancy
+tracking and many interesting packages, including a MQTT_ broker named
+Mosquitto. It is also a nice platform for Python (versions 2.7 and 3.4)
+since it provides many packages, either separate (big) ones from the
+Python standard library or by third parties, like even OpenCV!
 
-This makes it easy to control the input/output pins on a board like this
-with a high-level language like Python and libraries like Pingo_ for it.
-And it also makes it possible to run the relayr Python-SDK on the board
-itself!
+
+Install or upgrade Python
+-------------------------
 
 Before installing the Python-SDK on OpenWRT a few additional steps are
-necessary to add a few features missing in the Python interpreter
-installed by default.
+necessary to establish the baseline. If a Python interpreter is already
+installed it might well be Python 2.7.3. For security reasons it is
+recommended to replace this with Python 2.7.9 (or Python 3.4.3), or
+install it from scratch. Two extra packages are also needed, namely
+``python-codecs`` and ``python-openssl`` (the names may have a
+``python3-`` prefix if you prefer Python 3 - the relayr Python API
+runs on Python 2.7 and 3.4).
 
-Upgrade Python
---------------
+You can install these packages like this (shown here for Python 2.7):
 
-The relayr Python-SDK is mostly a client for the RESTful HTTP relayr
-API, implemented using the ``requests`` package which itself builds on
-``urllib3``. The minimal default Python interepreter on OpenWRT does
-not support these, so it must be upgraded to do that.
+.. code-block:: bash
 
-More to come... 
+    opkg install python-base
+    opkg install python-codecs
+    opkg install python-light
+    opkg install python-openssl
 
-Minimizing Python Code
-----------------------
+Then you should see this list when asking for installed Python packages
+with ``opkg list-installed | grep python``:
+
+.. code-block:: bash
+
+    python-base - 2.7.9-5
+    python-codecs - 2.7.9-5
+    python-light - 2.7.9-5
+    python-openssl - 2.7.9-5
+
+This will eat some of your memory, but you can include these packages
+into a custom firmware image (which will be heavily compressed) and
+flash your board with it in order to gain space, again, if you need
+it.
+
+
+Install temporary tools
+-----------------------
+
+Since OpenWRT_ contains only minimal versions of some common GNU/Linux
+tools, we need to install the real ones in a preliminary step like this
+(first updating the package menagement system):
+
+.. code-block:: bash
+
+    opkg update
+    opkg install wget tar
+
+Later, when everything needed is installed, you can remove these packages
+and their dependancies again with:
+
+.. code-block:: bash
+
+    opkg remove wget libpcre
+    opkg remove tar bzip2 libbz2 libacl
+
+If, for whatever reasons, you don't want to install these helpers, you
+can, of course, download a source code tarball on a normal machine and
+transfer the unpacked directory via ``scp -r`` to your board.
+
+
+Install dependancies
+--------------------
+
+The usual way of installing Python packages is ``pip`` or ``easy_install``
+where the latter builds on the ``setuptools`` package, an alternative for
+the ``distutils`` package in the Python standard library. While there are
+opkg packages for ``pip`` and ``setuptools`` these are pretty heavy and
+bring in other dependancies. Therefore they are not used here, but
+instead all the dependancies for the relayr Python API are installed
+individually.
+
+For the packages to build and install now it is recommended to create
+a source directory in the volatile RAM of your board (the WRTnode_ has
+128 MB), for example like this:
+
+.. code-block:: bash
+
+    mkdir /tmp/src
+    cd /tmp/src
+
+
+MQTT
+....
+
+OpenWRT_ does not provide the Python package ``paho-mqtt``, but it's very
+simple to build and install from source:
+
+.. code-block:: bash
+
+    wget --no-check-certificate https://pypi.python.org/packages/source/p/paho-mqtt/paho-mqtt-1.1.tar.gz
+    tar xfz paho-mqtt-1.1.tar.gz
+    cd paho-mqtt-1.1
+    python setup.py install
+    cd ..
+
+You have successfully installed it if you can run this in Python without
+any error: ``import paho``.
+
+
+Requests
+........
+
+.. code-block:: bash
+
+    wget --no-check-certificate https://pypi.python.org/packages/source/r/requests/requests-2.7.0.tar.gz
+    tar xfz requests-2.7.0.tar.gz
+    cd requests-2.7.0
+    python setup.py install
+    cd ..
+
+
+Certifi
+.......
+
+.. code-block:: bash
+
+    wget --no-check-certificate https://github.com/certifi/python-certifi/archive/2015.04.28.tar.gz
+    tar xfz 2015.04.28.tar.gz
+    cd python-certifi-2015.04.28
+    cp -r certifi /usr/lib/python2.7/site-packages
+    cd ..
+
+
+Miscellaneous
+.............
+
+The remaining modules are not strictly needed for being able to use the
+relayr Python API, like ``termcolor`` (used in a demo). Or they are not
+strictly needed *yet*, like ``isodate``.
+
+.. code-block:: bash
+
+    wget --no-check-certificate https://pypi.python.org/packages/source/t/termcolor/termcolor-1.1.0.tar.gz
+    tar xfz termcolor-1.1.0.tar.gz
+    cd termcolor-1.1.0
+    python setup.py install
+    cd ..
+
+    wget --no-check-certificate https://pypi.python.org/packages/source/i/isodate/isodate-0.5.1.tar.gz
+    tar xfz isodate-0.5.1.tar.gz
+    cd isodate-0.5.1/src
+    cp -r isodate /usr/lib/python2.7/site-packages
+    cd ../..
+
+
+relayr Python API
+.................
+
+Since we don't want to use ``pip`` or ``easy_install`` you can fetch
+a tarball from Github_ or PyPI_ and unpack it as usual. After that you
+need to copy the ``relayr`` folder manually into the ``site-packages``
+folder as shown here for Python 2.7:
+
+.. code-block:: bash
+
+    wget --no-check-certificate https://github.com/relayr/python-sdk/archive/0.3.0.tar.gz
+    # or wget --no-check-certificate https://pypi.python.org/packages/source/r/relayr/relayr-0.2.4.tar.gz
+    tar xfz 0.3.0.tar.gz
+    cd 0.3.0
+    cp -r relayr /usr/lib/python2.7/site-packages
+
+If everything worked fine you can run e.g. these commands from the unpacked
+directory to test that the installation was successful:
+
+.. code-block:: bash
+
+    python demos/api_pulse.py
+    python runtests.py tests/test_anonymous.py
+
+If you edit the file ``tests/fixture_registered.py`` and provide IDs of
+your WunderBar you can run the entire testsuite like this:
+``python runtests.py tests``.
+
+
+Digression on minimizing Python code
+------------------------------------
 
 Code minimization is usually performed on Javacript libraries to reduce
 download times in webbrowsers. On embedded devices the precious resource
@@ -42,21 +203,20 @@ to be installed, too, either by a third party or by yourself.
 The recommended tool for minimizing Python code is pyminifier_ which in
 its simple forms will strip-off docstrings and comments and minimize the
 indentation of Python source files. You can use it on the relayr
-Python-SDK for example as follows before installing it on OpenWRT_:
+Python-SDK for example as follows, before installing it on OpenWRT_:
 
 .. code-block:: bash
 
     pip install pyminifier
-    wget https://github.com/relayr/python-sdk/archive/0.2.4.tar.gz
-    tar xfz 0.2.4.tar.gz
-    cd 0.2.4
+    wget --no-check-certificate https://github.com/relayr/python-sdk/archive/0.3.0.tar.gz
+    tar xfz 0.3.0.tar.gz
+    cd 0.3.0
     pyminifier *.py
-
-More to come... 
 
 
 .. _OpenWRT: http://openwrt.org
 .. _WRTnode: http://wrtnode.com
-.. _Pingo: http://pingo.io
 .. _MQTT: http://mqtt.org
 .. _pyminifier: https://github.com/liftoff/pyminifier
+.. _Github: https://github.com/relayr/python-sdk
+.. _PyPI: https://pypi.python.org/pypi/relayr
