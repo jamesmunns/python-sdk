@@ -63,7 +63,7 @@ setup(
     author_email = "team@relayr.io",
     packages = ['relayr', 'relayr.utils'],
     keywords = ['relayr', 'rest', 'api', 'cloud', 'python', 'client', 'iot',
-        'wunderbar'],
+        'wunderbar', 'internet', 'things'],
     classifiers = [
         "Development Status :: 4 - Beta",
         "License :: OSI Approved :: MIT License",
