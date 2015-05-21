@@ -58,7 +58,7 @@ def connected_to_internet():
 
     try:
         # Give IP address to avoid potential DNS issues.
-        response = urlopen('http://74.125.228.100')
+        response = urlopen('http://173.194.32.200')
         return True
     except URLError as err:
         return False
