@@ -29,6 +29,8 @@ RECEIVER = '...'
 SMTP_SERVER = '...'
 SMTP_USERNAME = '...'
 SMTP_PASSWORD = '' # will be requested at run time if left empty 
+SMTP_SENDER = 'Wunderbar <notification-noreply@relayr.io>'
+SMTP_SSL = 'yes'
 
 try:
     settings = [ACCESS_TOKEN, MICROPHONE_ID, RECEIVER, SMTP_SERVER, SMTP_USERNAME]
@@ -49,13 +51,16 @@ class Callbacks(object):
     def send_email(self, text):
         "Send an email notification."
         
-        sender = 'Wunderbar <notification-noreply@relayr.io>'
+        sender = SMTP_SENDER
         subject = 'Wunderbar Notification from Device: %s' % self.device.name
         msg = MIMEText(text)
         msg['Subject'] = subject
         msg['From'] = sender
         msg['To'] = RECEIVER
-        s = smtplib.SMTP(SMTP_SERVER)
+	if SMTP_SSL == 'yes':
+            s = smtplib.SMTP_SSL(SMTP_SERVER)
+	else:
+            s = smtplib.SMTP(SMTP_SERVER)
         prompt = "SMTP user password for user '%s'? " % SMTP_USERNAME
         global SMTP_PASSWORD
         SMTP_PASSWORD = SMTP_PASSWORD or getpass.getpass(prompt)
