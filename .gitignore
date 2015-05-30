@@ -16,3 +16,8 @@ __pycache__
 # OS X temporary files that should never be committed
 ########################################
 .DS_Store
+
+########################################
+# Template files that usually are not committed
+########################################
+demos/odbclogger_ini.py
