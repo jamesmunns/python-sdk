@@ -5,7 +5,10 @@ Contributing
 
 Contributions are highly welcome and much appreciated, so please do not
 hesitate! Apart from bug reports we also welcome little self-contained
-examples that others may find useful.
+examples that others may find useful. If you write code please make sure
+to provide a clean pull request on GitHub, test it at least on Python 2.7
+and 3.4 and provide a test case in the testsuite. It makes your
+contributions more likely to get included more quickly.
 
 The various relayr SDKs are still in development stages.
 You can find the code of the
@@ -18,5 +21,5 @@ On GitHub you can also find SDKs for other languages
 or platforms such as `iOS and Mac <https://github.com/relayr/apple-sdk/>`_
 and `Android <https://github.com/relayr/android-sdk>`_.
 
-If you have more general questions you are more than welcome to reach out to us on the
-`relayr Forum <https://forum.relayr.io/>`_ 
+If you have more general questions you are more than welcome to reach out
+to us on the `relayr Forum <https://forum.relayr.io/>`_
