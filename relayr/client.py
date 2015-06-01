@@ -20,7 +20,7 @@ class Client(object):
     .. code-block:: python
 
         c = Client(token='...')
-        info = c.get_oauth_user_info()
+        info = c.get_oauth2_user_info()
         usr = User(info['id'], client=c)
         devs = usr.get_devices()
         d = next(devs)
