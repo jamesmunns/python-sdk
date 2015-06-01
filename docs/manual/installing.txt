@@ -13,7 +13,7 @@ Installing the installer
 ------------------------
 
 The recommended installation tool for Python packages today is pip_. If
-it is not already installed on your machine you can do so easyly as
+it is not already installed on your machine you can do so easily as
 follows:
 
 .. code-block:: console
@@ -30,9 +30,11 @@ You can find more about packaging in the `Python Packaging User Guide
 Creating a virtual environment
 ------------------------------
 
-In order not to risk the existing
-Python installation we recommend that you create a virtual Python environment
-(a ``virtualenv``), where you can install the relayr library:
+In order not to risk your existing Python installation it is recommended to
+create a virtual Python environment (short: a *virtualenv*), in which you
+can install the relayr library and its dependencies. To do that in Python
+2.x you need to have a package named ``virtualenv`` installed (a simple
+``pip install virtualenv`` will do):
 
 .. code-block:: console
 
@@ -41,10 +43,18 @@ Python installation we recommend that you create a virtual Python environment
     Installing setuptools, pip...done.
     $ 
 
-If ``virtualenv`` is not already installed on your system, you can install it
-with ``pip install virtualenv``. The above lines will create a subfolder
-named ``rvenv`` containing a separate Python installation. You can activate and
-deactivate this environment using the following code:
+In Python 3.3 and higher a tool named ``pyvenv`` is part of the standard
+Python installation:
+
+.. code-block:: console
+
+    $ pyvenv rvenv
+    $
+
+In both cases the above lines will create a subfolder named ``rvenv``
+containing a separate Python installation, plus additional tools like ``pip``.
+You can activate and deactivate this environment using the following
+commands in a terminal:
 
 .. code-block:: console
 
