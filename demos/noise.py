@@ -29,8 +29,8 @@ RECEIVER = '...'
 SMTP_SERVER = '...'
 SMTP_USERNAME = '...'
 SMTP_PASSWORD = '' # will be requested at run time if left empty 
-SMTP_SENDER = 'Wunderbar <notification-noreply@relayr.io>'
-SMTP_SSL = 'yes'
+SMTP_SENDER = 'WunderBar <notification-noreply@relayr.io>'
+SMTP_USE_SSL = False
 
 try:
     settings = [ACCESS_TOKEN, MICROPHONE_ID, RECEIVER, SMTP_SERVER, SMTP_USERNAME]
@@ -52,12 +52,12 @@ class Callbacks(object):
         "Send an email notification."
         
         sender = SMTP_SENDER
-        subject = 'Wunderbar Notification from Device: %s' % self.device.name
+        subject = 'WunderBar Notification from Device: %s' % self.device.name
         msg = MIMEText(text)
         msg['Subject'] = subject
         msg['From'] = sender
         msg['To'] = RECEIVER
-	if SMTP_SSL == 'yes':
+	if SMTP_USE_SSL == True:
             s = smtplib.SMTP_SSL(SMTP_SERVER)
 	else:
             s = smtplib.SMTP(SMTP_SERVER)
