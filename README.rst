@@ -13,16 +13,22 @@ Energy (using BlueZ_ on Linux, still very experimental).
 Installation
 --------------
 
-You can install the library using one of the following methods, with the
-help of Pip:
+You can install the library using one of the following methods, using
+``pip``:
 
-1. You can download the very latest version of the repository from GitHub::
+1. You can either download the very latest version of the repository
+   from GitHub::
 
-    pip install git+https://github.com/relayr/python-sdk
+      pip install git+https://github.com/relayr/python-sdk
 
-2. You could also use the following to install the package from the `Python Package Index`_::
+2. or you install the latest package release from the
+   `Python Package Index`_ as follows::
 
-    pip install relayr
+      pip install relayr
+
+A more detailed description of how to install this package using Python
+virtual environments and/or ``pip`` itself can be found in the manual,
+see the ``docs/manual`` folder of the code distribution.
 
 
 Examples
