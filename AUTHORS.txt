@@ -7,4 +7,5 @@ In alphabetical order by first names:
 
 * Dinu Gherman
 * Dmitry Vorobiov
+* Heinrich Schuchardt
 * Leonard Ehrenfried
