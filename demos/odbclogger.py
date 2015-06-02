@@ -44,9 +44,16 @@ class Callbacks(object):
         sql = 'INSERT INTO wunderdata (device, sensor, value) VALUES (?, ?, ?)'
         sys.stdout.write(self.device.name + ': ')
         for r in readings:
-            self.cursor.execute(sql, \
-                self.device.name, r['meaning'], r['value']).commit()
-            sys.stdout.write( r['meaning'] + ' = ' + str(r['value']) + '; ')
+            obj = r['value']
+            if isinstance(obj, float):
+                self.cursor.execute(sql, \
+                    self.device.name, r['meaning'], obj).commit()
+                sys.stdout.write( r['meaning'] + ' = ' + str(obj) + '; ')
+            if isinstance(obj, dict):
+                for k, v in obj.items():
+                    self.cursor.execute(sql, \
+                        self.device.name, r['meaning'] + '-' + k, v).commit()
+                    sys.stdout.write( r['meaning'] + '-' + k + ' = ' + str(v) + '; ')
         sys.stdout.write('\n')
 
 def connect():
