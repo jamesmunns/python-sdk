@@ -9,17 +9,18 @@ to an ODBC server.
 Please, maintain access data in odbclogger_ini.py.
 """
 
-import pyodbc
 import json
 import sys
 import time
 
+import pyodbc
 from relayr import Client
 from relayr.resources import Device
 from relayr.dataconnection import MqttStream
 
 # Include properties file.
 from odbclogger_ini import *
+
 
 # Check that all properties needed are set.
 try:
