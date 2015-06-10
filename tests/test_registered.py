@@ -164,7 +164,7 @@ class TestAPI(object):
         assert type(apps[0]) == dict
 
     def test_get_wunderbar(self, fix_registered):
-        "Test get info about the user's registered wunderbar device."
+        "Test get info about the user's newly registered wunderbar."
         from relayr import Client
         token = fix_registered.testset1['token']
         c = Client(token=token)
@@ -177,6 +177,13 @@ class TestAPI(object):
         for typ, info in wb_dev_info.items():
             for key in 'owner name id'.split(): # plus others...
                 assert key in info
+        # now clean-up
+        from relayr.resources import Transmitter
+        t_id = wb_dev_info['masterModule']['id']
+        t = Transmitter(id=t_id, client=c)
+        for dev in t.get_connected_devices():
+            dev.delete()
+        t.delete()
 
 
 class TestClient(object):
@@ -256,6 +263,9 @@ class TestClient(object):
         usr = c.get_user()
         items = list(usr.register_wunderbar())
         assert len(items) == 7
+        # now clean-up
+        for item in items:
+            item.delete()
 
 
 class TestTransmitters(object):
@@ -314,10 +324,15 @@ class TestWunderbar(object):
         c = Client(token=token)
         usr = c.get_user()
         assert usr.name == fix_registered.testset1['userName']
-        devs = usr.register_wunderbar()
+        devs = list(usr.register_wunderbar())
         for d in devs:
             assert d.__class__ in (Device, Transmitter)
             assert hasattr(d, 'id')
+        # now clean-up
+        for dev in [d for d in devs if d.__class__ == Device]:
+            dev.delete()
+        for t in [d for d in devs if d.__class__ == Transmitter]:
+            t.delete()
 
 
 class TestPublishers(object):
