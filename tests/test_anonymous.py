@@ -81,7 +81,7 @@ class TestApiFunctions(object):
         res = build_curl_call('POST', 'http://foo.com/bar',
             data={'x': 42},
             headers={'SUPER_SECRET_KEY': '123'})
-        exp = 'curl -X POST http://foo.com/bar -H "SUPER_SECRET_KEY: 123" --data "{\\"x\\": 42}"'
+        exp = 'curl -X POST "http://foo.com/bar" -H "SUPER_SECRET_KEY: 123" --data "{\\"x\\": 42}"'
         assert res == exp
 
     def test_build_curl_call_list(self, fix_anonymous):
@@ -90,7 +90,7 @@ class TestApiFunctions(object):
         res = build_curl_call('POST', 'http://foo.com/bar',
             data=[None, 23, "42"],
             headers={'SUPER_SECRET_KEY': '123'})
-        exp = 'curl -X POST http://foo.com/bar -H "SUPER_SECRET_KEY: 123" --data "[null, 23, \\"42\\"]"'
+        exp = 'curl -X POST "http://foo.com/bar" -H "SUPER_SECRET_KEY: 123" --data "[null, 23, \\"42\\"]"'
         assert res == exp
 
 

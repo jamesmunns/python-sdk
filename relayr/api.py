@@ -68,9 +68,9 @@ def build_curl_call(method, url, data=None, headers=None):
         cmd = build_curl_call('POST', 'http://foo.com/bar', data={'x': 42},
                 headers={'SUPER_SECRET_KEY': '123'})
         print(cmd)
-        curl -X POST http://foo.com/bar -H "SUPER_SECRET_KEY: 123" --data "{\"x\": 42}"
+        curl -X POST "http://foo.com/bar" -H "SUPER_SECRET_KEY: 123" --data "{\"x\": 42}"
     """
-    command = "curl -X {0} {1}".format(method.upper(), url)
+    command = 'curl -X {0} "{1}"'.format(method.upper(), url)
     if headers:
         for k, v in headers.items():
             command += ' -H "{0}: {1}"'.format(k, v)
