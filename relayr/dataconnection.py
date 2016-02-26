@@ -18,11 +18,17 @@ import paho.mqtt.client as mqtt
 from relayr import config
 from relayr.compat import PY2, PY3
 
+from collections import namedtuple
+import queue
+
+MqttMessage = namedtuple("MqttMessage", "topic payload")
 
 class MqttStream(threading.Thread):
-    "MQTT stream reading data from devices in the relayr cloud."
+    """
+    MQTT stream reading data from devices in the relayr cloud.
+    """
 
-    def __init__(self, callback, devices, transport='mqtt'):
+    def __init__(self, devices, callback=None, transport='mqtt'):
         """
         Opens an MQTT connection with a callback and one or more devices.
 
@@ -41,6 +47,10 @@ class MqttStream(threading.Thread):
             for dev in devices]
         self.topics = [credentials['credentials']['topic']
             for credentials in self.credentials_list]
+
+        # If no callback is provided, queue messages
+        self.mqtt_queue = queue.Queue()
+
         self.setDaemon(True)
 
     def run(self):
@@ -98,13 +108,18 @@ class MqttStream(threading.Thread):
         """
         Pass the message topic and payload as strings to our callback.
         """
-        if PY2:
-            self.callback(msg.topic, msg.payload)
+        topic = msg.topic
+        payload = msg.payload if not PY2 else msg.payload.decode("utf-8")
+
+        if self.callback is None:
+            self.queue_message(topic, payload)
         else:
-            self.callback(msg.topic, msg.payload.decode("utf-8"))
+            self.callback(topic, payload)
 
     def add_device(self, device):
-        "Add a specific device to the MQTT connection to receive data from."
+        """
+        Add a specific device to the MQTT connection to receive data from.
+        """
         # create credentials
         creds = device.create_channel('mqtt')
         self.credentials_list.append(creds)
@@ -117,7 +132,9 @@ class MqttStream(threading.Thread):
         self.client.subscribe(topic)
 
     def remove_device(self, device):
-        "Remove a specific device from the MQTT connection to no longer receive data from."
+        """
+        Remove a specific device from the MQTT connection to no longer receive data from.
+        """
         # find respective credentials
         dummy_creds = device.create_channel('mqtt')
         creds = [c for c in self.credentials_list
@@ -130,3 +147,24 @@ class MqttStream(threading.Thread):
         if PY2:
            topic = topic.encode('utf-8')
         self.client.unsubscribe(topic)
+
+    def get_messages(self, max_count=None):
+        """
+        Collect up to 'max_count' messages from the message queue
+        """
+        messages = []
+        if max_count is None:
+            while not self.mqtt_queue.empty():
+                messages.append(self.mqtt_queue.get())
+        else:
+            for _ in range(max_count):
+                if self.mqtt_queue.empty():
+                    break
+                messages.append(self.mqtt_queue.get())
+        return messages
+
+    def queue_message(self, topic, payload):
+        """
+        Place a message onto a threadsafe queue
+        """
+        self.mqtt_queue.put(MqttMessage(topic, payload))
