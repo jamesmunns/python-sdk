@@ -152,7 +152,7 @@ class Api(object):
             command = build_curl_call(method, url, data, headers)
             self.logger.info("API request: " + command)
 
-        json_data = 'null'
+        json_data = None if method.lower() == 'get' else "null"
         if data is not None:
             json_data = json.dumps(data)
             try:
