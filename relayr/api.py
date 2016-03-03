@@ -1414,12 +1414,10 @@ class Api(object):
         _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
-    def post_transmitter(self, transmitterID, ownerID=None, name=None, integrationType=None):
+    def post_transmitter(self, ownerID=None, name=None, integrationType=None):
         """
         Register a new transmitter on the relayr platform.
 
-        :param transmitterID: the transmitter UUID
-        :type transmitterID: string
         :param ownerID: the transmitter owner's UUID
         :type ownerID: string
         :param name: the transmitter name
@@ -1437,7 +1435,7 @@ class Api(object):
             data.update(integrationType=integrationType)
 
         # https://api.relayr.io/transmitters/<id>
-        url = '{0}/transmitters/{1}'.format(self.host, transmitterID)
+        url = '{0}/transmitters/'.format(self.host)
         _, data = self.perform_request('POST', url, data=data, headers=self.headers)
         return data
 
