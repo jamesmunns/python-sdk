@@ -195,7 +195,7 @@ class TestMqttMultipleStreams(object):
         self.received_data.append(message)
 
 
-class TestDynmicMqttStreams(object):
+class TestDynamicMqttStreams(object):
     "Test assigning devices to one MQTT stream and reading their data."
 
     def receive(self, topic, payload):

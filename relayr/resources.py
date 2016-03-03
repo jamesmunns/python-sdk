@@ -254,6 +254,133 @@ class App(object):
         raise NotImplementedError
 
 
+class Group(object):
+    """
+    A relayr device group.
+
+    A device group is simply an ordered list of devices with its own ID,
+    name and owner. The position of the group is the one where it appears
+    when asking for the list of all groups. This position can be changed.
+    """
+
+    def __init__(self, id=None, client=None):
+        """
+        Instantiate new device group with given UUID and API client.
+
+        :param id: the UUID of this group
+        :type id: string
+        :param client: the the user's UUID who is the owner of this group
+        :type client: :py:class:`relayr.client.Client`
+        :rtype: self
+        """
+        self.id = id
+        self.devices = []
+        self.client = client
+
+    def __repr__(self):
+        return "%s(id=%r)" % (self.__class__.__name__, self.id)
+
+    def create(self, name, owner=None):
+        """
+        Create new device group with given name and owner.
+
+        :param name: the name of this group
+        :type name: string
+        :param owner: the the user's UUID who is the owner of this group
+        :type owner: string
+        :rtype: self
+        """
+
+        if self.id is None:
+            res = self.client.api.post_user_device_group(name, owner)
+            self.id = res['id']
+        return self
+
+    def get_info(self):
+        """
+        Retrieves device group info and stores it as instance attributes.
+
+        :rtype: self.
+        """
+
+        res = self.client.api.get_user_device_group(self.id)
+        for k in res:
+            if k == 'devices':
+                for res2 in res[k]:
+                    d = Device(res2['id'], client=self.client)
+                    d.get_info()
+                    # add position field used in a group context
+                    if 'position' in res2:
+                        d.position = res2['position']
+                    self.devices.append(d)
+            else:
+                setattr(self, k, res[k])
+        return self
+
+    def update(self, name=None, position=None):
+        """
+        Updates position of this group in the list of all groups.
+
+        :param name: the new name of this group
+        :type name: string
+        :param position: the new position of this group in the list of all groups
+        :type position: integer
+        :rtype: self
+        """
+
+        # returns None
+        self.client.api.patch_user_device_group(self.id, name=name, position=position)
+        return self
+
+    def delete(self):
+        """
+        Deletes the group from the relayr platform.
+
+        :rtype: self
+        """
+
+        res = self.client.api.delete_user_device_group(self.id)
+        return self
+
+    def add_device(self, device):
+        """
+        Add a device from the relayr platform to this device group.
+
+        :param device: a relayr device object
+        :type device: :py:class:`relayr.resources.Device`
+        :rtype: self
+        """
+
+        res = self.client.api.post_user_device_group_device(self.id, device.id)
+        return self
+
+    def remove_device(self, device):
+        """
+        Remove a device from the relayr platform from this device group.
+
+        :param device: a relayr device object
+        :type device: :py:class:`relayr.resources.Device`
+        :rtype: self
+        """
+
+        res = self.client.api.delete_user_device_group_device(self.id, device.id)
+        return self
+
+    def update_device(self, device, position=None):
+        """
+        Update a device inside this device group (now only the position field).
+
+        :param device: a relayr device object
+        :type device: :py:class:`relayr.resources.Device`
+        :param position: the new position of the device in the list of all devices
+        :type position: integer
+        :rtype: self
+        """
+
+        res = self.client.api.patch_user_device_group_device(self.id, device.id, position)
+        return self
+
+
 class Device(object):
     """
     A relayr device.
@@ -368,7 +495,8 @@ class Device(object):
         :type bool: boolean
         :type command: self
         """
-        res = self.client.api.post_device_command_led(self.id, {'cmd': int(bool)})
+        data = {'path': 'led', 'command': 'cmd', 'value': int(bool)}
+        res = self.client.api.post_device_command_led(self.id, data)
         return self
 
     def get_data(self, start=None, end=None, duration=None, pagesize=1, pagenum=1):

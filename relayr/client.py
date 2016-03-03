@@ -8,7 +8,8 @@ from relayr import config
 from relayr.api import Api
 from relayr.version import __version__
 from relayr.exceptions import RelayrApiException
-from relayr.resources import User, App, Device, DeviceModel, Transmitter, Publisher
+from relayr.resources import User, App, Device, DeviceModel, Transmitter, Publisher,\
+    Group
 
 
 class Client(object):
@@ -163,3 +164,21 @@ class Client(object):
         :rtype: A :py:class:`relayr.resources.Device` object.
         """
         return Device(id=id, client=self)
+
+    def get_device_groups(self):
+        """
+        Returns a generator for all device groups on the relayr platform.
+
+        A device group is a simple dictionary with a ``key`` and ``value``
+        field.
+
+        A generator is returned since the called API method always
+        returns the entire results list and not a paginated one.
+
+        :rtype: A :py:class:`relayr.resources.Group` object.
+        """
+        info = self.api.get_oauth2_user_info()
+        for g in self.api.get_user_device_groups():
+            group = Group(id=g['id'], client=self)
+            group.get_info()
+            yield group
