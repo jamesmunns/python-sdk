@@ -1,11 +1,14 @@
 .. _authors:
 
 Authors
-=========
+=======
 
 In alphabetical order by first names:
 
 * Dinu Gherman
 * Dmitry Vorobiov
+* Emiliano Busiello
 * Heinrich Schuchardt
+* James Munns
 * Leonard Ehrenfried
+* Sergey Cheparev
