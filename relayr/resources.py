@@ -11,6 +11,7 @@ import warnings
 
 from relayr import exceptions
 from relayr.dataconnection import MqttStream as Connection
+from relayr.utils.misc import get_start_end, datetime_to_millis
 
 
 class User(object):
@@ -499,25 +500,27 @@ class Device(object):
         res = self.client.api.post_device_command_led(self.id, data)
         return self
 
-    def get_data(self, start=None, end=None, duration=None, pagesize=1, pagenum=1):
+    def get_data(self, start=None, end=None, duration=None, sample=None, offset=None, limit=None):
         """
-        Get a chunk of historical data recorded in the past for a specific device.
-
-        WARNING: This is bleeding edge code and might change again, soon!
+        Get a chunk of historical data recorded in the past for this device.
 
         Exactly one of the parameters ``start``, ``end`` and ``duration`` must
         be None, else an ``AssertionError`` is raised. The data will be returned
-        using a paging mechanism with up to 1000 data points per page (``pagesize``).
+        using a paging mechanism with up to 10000 data points per page (``limit``).
 
         :param start: datetime value
-        :type start: ISO 8601 string or ``datetime.datetime`` instance or None
+        :type start: ISO 8601 string or ``datetime.datetime`` instance or milliseconds or None
         :param end: datetime value
-        :type end: ISO 8601 string or ``datetime.datetime`` instance or None
+        :type end: ISO 8601 string or ``datetime.datetime`` instance or milliseconds or None
         :param duration: time duration
-        :type duration: ISO 8601 duration string or ``datetime.timedelta`` instance or None
+        :type duration: ISO 8601 duration string or ``datetime.timedelta`` instance or milliseconds or None
         :rtype: a dict with historical data plus meta-information
         """
-        res = self.client.api.get_device_data(self.id, start=start, end=end, duration=duration, pagesize=pagesize, pagenum=pagenum)
+        start, end = get_start_end(start=start, end=end, duration=duration)
+        start = datetime_to_millis(start)
+        end = datetime_to_millis(end)
+        res = self.client.api.get_history_devices(self.id,
+            start=start, end=end, sample=sample, offset=offset, limit=limit)
         return res
 
     # new methods for transport channels

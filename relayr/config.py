@@ -16,6 +16,7 @@ from .version import __version__
 
 # defaults
 relayrAPI = 'https://api.relayr.io'
+relayrHistoryAPI ='https://data.relayr.io'
 clientName = 'io.relayr.sdk.python'
 userAgentString = '{client_name}/{client_version} '
 userAgentString += '({platform}; {arch}; {python_implementation}-{python_version})'
@@ -28,6 +29,7 @@ RELAYR_MQTT_PORT = 8883
 
 # overwrite with environment variables if given
 relayrAPI = os.environ.get('RELAYR_API', relayrAPI)
+relayrHistoryAPI = os.environ.get('RELAYR_HISTORY_API', relayrHistoryAPI)
 clientName = os.environ.get('RELAYR_PYTHON_CLIENT_NAME', clientName)
 userAgentString = os.environ.get('RELAYR_DATAHUB', userAgentString)
 DEBUG = True if os.environ.get('RELAYR_DEBUG', 'False') == 'True' else False

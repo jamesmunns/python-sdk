@@ -20,6 +20,7 @@ running the tests!
 """
 
 import pytest
+import isodate
 
 
 class TestDatetimeIntervals(object):
@@ -31,8 +32,8 @@ class TestDatetimeIntervals(object):
         from datetime import datetime, timedelta
         from relayr.utils.misc import get_start_end
 
-        dtiso0 = '2015-03-01T00:00:00'
-        dtiso1 = '2015-04-02T00:00:00'
+        dtiso0 = isodate.parse_datetime('2015-03-01T00:00:00')
+        dtiso1 = isodate.parse_datetime('2015-04-02T00:00:00')
         dt0 = datetime(2015, 3, 1)
         dt1 = datetime(2015, 4, 2)
 
@@ -45,16 +46,16 @@ class TestDatetimeIntervals(object):
 
         s, e = get_start_end(start=dtiso0, duration='P1D')
         assert s == dtiso0
-        assert e == '2015-03-02T00:00:00'
+        assert e == isodate.parse_datetime('2015-03-02T00:00:00')
         s, e = get_start_end(start=dt0, duration=timedelta(days=1))
         assert s == dtiso0
-        assert e == '2015-03-02T00:00:00'
+        assert e == isodate.parse_datetime('2015-03-02T00:00:00')
 
         s, e = get_start_end(end=dtiso1, duration='P1D')
-        assert s == '2015-04-01T00:00:00'
+        assert s == isodate.parse_datetime('2015-04-01T00:00:00')
         assert e == dtiso1
         s, e = get_start_end(end=dt1, duration=timedelta(days=1))
-        assert s == '2015-04-01T00:00:00'
+        assert s == isodate.parse_datetime('2015-04-01T00:00:00')
         assert e == dtiso1
 
 

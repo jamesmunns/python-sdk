@@ -105,6 +105,7 @@ class Api(object):
         """
         self.token = token
         self.host = config.relayrAPI
+        self.history_host = config.relayrHistoryAPI
         self.useragent = config.userAgent
         self.headers = {
             'User-Agent': self.useragent,
@@ -1355,6 +1356,42 @@ class Api(object):
         url = '{0}/devices/{1}/apps/{2}'.format(self.host, deviceID, appID)
         _, data = self.perform_request('DELETE', url, headers=self.headers)
         return data
+
+    # "History API"
+
+    def get_history_devices(self, deviceID, start=None, end=None, sample=None,
+                            meaning=None, path=None, offset=None, limit=None):
+        """
+        Return past data for a specific device after a given starting point.
+
+        :param deviceID: the device UUID
+        :type deviceID: string
+        :param start: unix datetime in ms
+        :type start: long
+        :param end: unit datetime in ms
+        :type end: long
+        :param meaning: meaning filter
+        :type meaning: string
+        :param path: path filter
+        :type path: string
+        :param offset: pagination offset
+        :type offset: integer
+        :param limit: limit for returned values
+        :type limit: integer
+        :rtype: history response with pagination info
+        """
+        # https://data.relayr.io/history/devices/<deviceID>?start=<..>
+        base_url = '{0}/history/devices/{1}'.format(self.history_host, deviceID)
+
+        params = {'start': start}
+        for p in 'end meaning path offset limit'.split():
+            params[p] = locals()[p]
+        params = {k:v for (k, v) in params.items() if v is not None}
+
+        url = base_url + '?%s' % urllib.urlencode(params)
+        _, data = self.perform_request('GET', url, headers=self.headers)
+        return data
+
 
     # ..............................................................................
     # Device models
