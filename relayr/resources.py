@@ -500,7 +500,7 @@ class Device(object):
         res = self.client.api.post_device_command_led(self.id, data)
         return self
 
-    def get_data(self, start=None, end=None, duration=None, sample=None, offset=None, limit=None):
+    def get_data(self, start=None, end=None, duration=None, meaning=None, sample=None, offset=None, limit=None):
         """
         Get a chunk of historical data recorded in the past for this device.
 
@@ -520,7 +520,7 @@ class Device(object):
         start = datetime_to_millis(start)
         end = datetime_to_millis(end)
         res = self.client.api.get_history_devices(self.id,
-            start=start, end=end, sample=sample, offset=offset, limit=limit)
+            start=start, end=end, meaning=meaning, sample=sample, offset=offset, limit=limit)
         return res
 
     # new methods for transport channels
