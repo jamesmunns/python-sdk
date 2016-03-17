@@ -22,6 +22,136 @@ running the tests!
 import pytest
 
 
+class TestDeviceGroups(object):
+    "Test device groups, low-level."
+
+    def test_create_list_delete_group_device(self, fix_registered):
+        "Test create, list and delete device groups."
+        from relayr import Client
+        from relayr.exceptions import RelayrApiException
+        from relayr.resources import Group, Device
+        token = fix_registered.testset1['token']
+        c = Client(token=token)
+
+        def get_test_groups():
+            return [g for g in c.get_device_groups() if g.name.startswith('Test')]
+
+        # delete test groups
+        test_groups = get_test_groups()
+        for g in test_groups:
+            g.delete()
+
+        return
+
+        # list test groups
+        test_groups = get_test_groups()
+        num_groups = len(list(test_groups))
+        assert num_groups == 0
+
+        # create test group
+        group_name1 = 'TestGroup1'
+        g1 = Group(client=c).create(name=group_name1)
+        g1.get_info()
+
+        # list test groups
+        test_groups = get_test_groups()
+        num_groups = len(list(test_groups))
+        assert num_groups == 1
+
+        # create test group
+        group_name2 = 'TestGroup2'
+        g2 = Group(client=c).create(name=group_name2)
+        g2.get_info()
+
+        # list test groups
+        test_groups = get_test_groups()
+        num_groups = len(list(test_groups))
+        assert num_groups == 2
+        assert test_groups[0].name == group_name1
+        assert test_groups[1].name == group_name2
+        assert test_groups[0].position < test_groups[1].position
+
+        # update second group's position to be first in list of all groups
+        test_groups[1].update(position=0)
+
+        # list test groups
+        test_groups = get_test_groups()
+        num_groups = len(list(test_groups))
+        assert num_groups == 2
+        assert test_groups[0].name == group_name2
+        assert test_groups[1].name == group_name1
+        assert test_groups[0].position < test_groups[1].position
+
+        # update group name
+        new_name = g1.name + 'Updated'
+        g1.update(name=new_name)
+        g1.get_info()
+        assert g1.name == new_name
+
+        # delete test groups
+        test_groups = get_test_groups()
+        for g in test_groups:
+            g.delete()
+
+        # list test groups
+        test_groups = get_test_groups()
+        num_groups = len(list(test_groups))
+        assert num_groups == 0
+
+
+    def test_add_list_remove_device_group_device(self, fix_registered):
+        "Test add, list, update and remove device to/from device group."
+        from relayr import Client
+        from relayr.exceptions import RelayrApiException
+        from relayr.resources import Group, Device
+        token = fix_registered.testset1['token']
+        c = Client(token=token)
+
+        # create test group
+        group_name = 'TestGroup'
+        g = Group(client=c).create(name=group_name)
+        g.get_info()
+        assert g.name == group_name
+        assert len(g.devices) == 0
+
+        # add two WunderBar devices
+        d1_id = fix_registered.testset1['deviceID']
+        d1 = Device(d1_id)
+        g.add_device(d1)
+        d2_id = fix_registered.testset1['deviceID2']
+        d2 = Device(d2_id)
+        g.add_device(d2)
+
+        # get test group, again
+        g = Group(id=g.id, client=c).get_info()
+        devices = g.devices
+        assert len(devices) == 2
+        assert devices[0].id == d1_id
+        assert devices[1].id == d2_id
+
+        # update last device's position in group to be first
+        g.update_device(devices[1], 0)
+
+        # get test group, again
+        g = Group(id=g.id, client=c).get_info()
+        devices = g.devices
+        assert len(devices) == 2
+        assert devices[0].id == d2_id
+        assert devices[1].id == d1_id
+
+        # remove first device in group
+        g.remove_device(devices[0])
+
+        # get test group, again
+        g = Group(id=g.id, client=c).get_info()
+        devices = g.devices
+        assert len(devices) == 1
+        assert devices[0].id == d1_id
+
+        # delete test group
+        g.delete()
+
+
 class TestChannelCredentials(object):
     "Test channel credentials, low-level."
 
@@ -134,14 +264,22 @@ class TestAPI(object):
             assert key in info
         assert token == info['token']
 
-    def _test_update_user(self, fix_registered):
+    def test_update_user(self, fix_registered):
         "Test update user attribute, here: name."
         from relayr import Client
-        ## TODO: check if a regular user can change his own attributes...
         token = fix_registered.testset1['token']
         c = Client(token=token)
-        info = c.api.get_oauth2_user_info()
-        c.api.patch_user(info['id'], name='dcg')
+
+        old_info = c.api.get_oauth2_user_info()
+        old_name = old_info['name']
+
+        c.api.patch_user(old_info['id'], name='_' + old_name)
+        new_info = c.api.get_oauth2_user_info()
+        assert new_info['name'] == '_' + old_name
+
+        c.api.patch_user(old_info['id'], name=old_name)
+        new_info = c.api.get_oauth2_user_info()
+        assert new_info['name'] == old_name
 
     def test_get_transmitters(self, fix_registered):
         "Test get user's transmitters."

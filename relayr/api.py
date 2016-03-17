@@ -105,6 +105,7 @@ class Api(object):
         """
         self.token = token
         self.host = config.relayrAPI
+        self.history_host = config.relayrHistoryAPI
         self.useragent = config.userAgent
         self.headers = {
             'User-Agent': self.useragent,
@@ -152,7 +153,7 @@ class Api(object):
             command = build_curl_call(method, url, data, headers)
             self.logger.info("API request: " + command)
 
-        json_data = 'null'
+        json_data = None if method.lower() == 'get' else "null"
         if data is not None:
             json_data = json.dumps(data)
             try:
@@ -600,6 +601,151 @@ class Api(object):
         # https://api.relayr.io/users/%s/destroy-everything-i-love
         url = '{0}/users/{1}/destroy-everything-i-love'.format(self.host, userID)
         _, data = self.perform_request('POST', url, headers=self.headers)
+        return data
+
+    def get_user_device_models(self, userID):
+        """
+        Get all device models of a specific user from the relayr cloud.
+
+        :param userID: the users's UUID
+        :type userID: string
+        """
+        # https://api.relayr.io/users/%s/device-models
+        url = '{0}/users/{1}/device-models'.format(self.host, userID)
+        hdrs = self.headers.copy()
+        hdrs['Content-Type'] = 'application/hal+json' # only hal+json allowed
+        _, data = self.perform_request('GET', url, headers=hdrs)
+        return data
+
+    def get_user_device_model(self, userID, modelID):
+        """
+        Get a specific device model of a specific user from the relayr cloud.
+
+        :param userID: the users's UUID
+        :type userID: string
+        :param modelID: the model's UUID
+        :type modelID: string
+        """
+        # https://api.relayr.io/users/%s/device-models/%s
+        url = '{0}/users/{1}/device-models/{2}'.format(self.host, userID, modelID)
+        hdrs = self.headers.copy()
+        hdrs['Content-Type'] = 'application/hal+json' # only hal+json allowed
+        _, data = self.perform_request('GET', url, headers=hdrs)
+        return data
+
+    def get_user_device_model_component(self, userID, modelID, component):
+        pass
+
+    # device groups
+    # http://docs.wunderbarregistration.apiary.io/#devicegroups
+
+    def get_user_device_groups(self, userID):
+        """
+        Get all device groups of a specific user from the relayr cloud.
+        """
+        # https://api.relayr.io/groups
+        url = '{0}/users/{1}/groups'.format(self.host, userID)
+        _, data = self.perform_request('GET', url, headers=self.headers)
+        return data
+
+    def delete_user_device_groups(self, userID):
+        """
+        Delete all device groups of a specific user from the relayr cloud.
+        """
+        # https://api.relayr.io/groups
+        url = '{0}/users/{1}/groups'.format(self.host, userID)
+        _, data = self.perform_request('DELETE', url, headers=self.headers)
+        return data
+
+    def post_user_device_group(self, name):
+        """
+        Create one device group with given name for the implied owner in the relayr cloud.
+        """
+        # https://api.relayr.io/groups
+        url = '{0}/groups'.format(self.host)
+        data = {"name": name}
+        _, data = self.perform_request('POST', url, data=data, headers=self.headers)
+        return data
+
+    def get_user_device_group(self, groupID):
+        """
+        Get one device group with a specific id from the relayr cloud.
+
+        :param groupID: the group's UUID
+        :type groupID: string
+        """
+        # https://api.relayr.io/groups
+        url = '{0}/groups/{1}'.format(self.host, groupID)
+        _, data = self.perform_request('GET', url, headers=self.headers)
+        return data
+
+    def delete_user_device_group(self, groupID):
+        """
+        Delete one device group with a specific id from the relayr cloud.
+
+        :param groupID: the group's UUID
+        :type groupID: string
+        """
+        # https://api.relayr.io/groups
+        url = '{0}/groups/{1}'.format(self.host, groupID)
+        _, data = self.perform_request('DELETE', url, headers=self.headers)
+        return data
+
+    def patch_user_device_group(self, groupID, name=None, position=None):
+        """
+        Patch one device group with a specific id from the relayr cloud.
+
+        :param groupID: the group's UUID
+        :type groupID: string
+        :param name: the group's new name
+        :type name: integer
+        :param position: the group's new position
+        :type position: integer
+        """
+        # https://api.relayr.io/groups
+        url = '{0}/groups/{1}'.format(self.host, groupID)
+        data = {}
+        if not name is None:
+            data.update(name=name)
+        if not position is None:
+            data.update(position=position)
+        _, data = self.perform_request('PATCH', url, data=data, headers=self.headers)
+        return data
+
+    def post_user_device_group_device(self, groupID, deviceIDs=None):
+        """
+        Add a list of existing device ids to a device group.
+
+        :param groupID: the group's UUID
+        :type groupID: string
+        :param deviceIDs: devices to be added to the group
+        :type deviceIDs: list of UUIDs
+        """
+        # https://api.relayr.io/groups/<id>
+        url = '{0}/groups/{1}'.format(self.host, groupID)
+        data = {}
+        if not deviceIDs is None:
+            data.update(deviceIds=deviceIDs)
+        _, data = self.perform_request('POST', url, data=data, headers=self.headers)
+        return data
+
+    def delete_user_device_group_device(self, groupID, deviceID):
+        """
+        Delete a device from a device group.
+        """
+        # https://api.relayr.io/groups/<id>/devices/<id>
+        url = '{0}/groups/{1}/devices/{2}'.format(self.host, groupID, deviceID)
+        _, data = self.perform_request('DELETE', url, headers=self.headers)
+        return data
+
+    def patch_user_device_group_device(self, groupID, deviceID, position):
+        """
+        Change a device position inside a device group.
+        """
+        # https://api.relayr.io/groups/<id>/devices/<id>
+        url = '{0}/groups/{1}/devices/{2}'.format(self.host, groupID, deviceID)
+        data = {"position": position}
+        _, data = self.perform_request('PATCH', url, data=data, headers=self.headers)
         return data
 
     # ..............................................................................
@@ -1103,6 +1249,7 @@ class Api(object):
             data['transport'] = transport
         _, res = self.perform_request('DELETE', url,
                                       data=data, headers=self.headers)
+        return res
 
     def get_device_channels(self, deviceID):
         """
@@ -1210,19 +1357,57 @@ class Api(object):
         _, data = self.perform_request('DELETE', url, headers=self.headers)
         return data
 
+    # "History API"
+
+    def get_history_devices(self, deviceID, start=None, end=None, sample=None,
+                            meaning=None, path=None, offset=None, limit=None):
+        """
+        Return past data for a specific device after a given starting point.
+
+        :param deviceID: the device UUID
+        :type deviceID: string
+        :param start: unix datetime in ms
+        :type start: long
+        :param end: unit datetime in ms
+        :type end: long
+        :param meaning: meaning filter
+        :type meaning: string
+        :param path: path filter
+        :type path: string
+        :param offset: pagination offset
+        :type offset: integer
+        :param limit: limit for returned values
+        :type limit: integer
+        :rtype: history response with pagination info
+        """
+        # https://data.relayr.io/history/devices/<deviceID>?start=<..>
+        base_url = '{0}/history/devices/{1}'.format(self.history_host, deviceID)
+
+        params = {'start': start}
+        for p in 'end meaning path offset limit'.split():
+            params[p] = locals()[p]
+        params = {k:v for (k, v) in params.items() if v is not None}
+
+        url = base_url + '?%s' % urllib.urlencode(params)
+        _, data = self.perform_request('GET', url, headers=self.headers)
+        return data
+
+
     # ..............................................................................
     # Device models
     # ..............................................................................
 
-    def get_public_device_models(self):
+    def get_public_device_models(self, headers={'Content-Type': 'application/json'}):
         """
         Get list of all device models available on the relayr platform.
 
-        :rtype: list of dicts, each representing a relayr device model
+        :param headers: additional HTTP headers (default: ``{'Content-Type': 'application/json'}``)
+        :type headers: dict
+        :rtype: list or dict, depening on the ``Content-Type`` field in headers
         """
         # https://api.relayr.io/device-models
         url = '{0}/device-models'.format(self.host)
-        _, data = self.perform_request('GET', url)
+        _, data = self.perform_request('GET', url, headers=headers)
         return data
 
     def get_device_model(self, devicemodelID):
@@ -1266,12 +1451,10 @@ class Api(object):
         _, data = self.perform_request('GET', url, headers=self.headers)
         return data
 
-    def post_transmitter(self, transmitterID, ownerID=None, name=None, integrationType=None):
+    def post_transmitter(self, ownerID=None, name=None, integrationType=None):
         """
         Register a new transmitter on the relayr platform.
 
-        :param transmitterID: the transmitter UUID
-        :type transmitterID: string
         :param ownerID: the transmitter owner's UUID
         :type ownerID: string
         :param name: the transmitter name
@@ -1289,7 +1472,7 @@ class Api(object):
             data.update(integrationType=integrationType)
 
         # https://api.relayr.io/transmitters/<id>
-        url = '{0}/transmitters/{1}'.format(self.host, transmitterID)
+        url = '{0}/transmitters/'.format(self.host)
         _, data = self.perform_request('POST', url, data=data, headers=self.headers)
         return data
 
@@ -1365,5 +1548,5 @@ class Api(object):
         """
         # https://api.relayr.io/transmitters/<transmitterID>/devices/<deviceID>
         url = '{0}/transmitters/{1}/devices/{2}'.format(self.host, transmitterID, deviceID)
-        _, data = self.perform_request('DELETE', url, data=data, headers=self.headers)
+        _, data = self.perform_request('DELETE', url, headers=self.headers)
         return data
